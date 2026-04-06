@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import {
   Sheet,
   SheetContent,
+  SheetDescription,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -90,6 +91,9 @@ export function Header() {
                     SadamaAgent
                   </span>
                 </SheetTitle>
+                <SheetDescription className="sr-only">
+                  Navigation menu
+                </SheetDescription>
               </SheetHeader>
               <nav className="flex flex-col gap-1 py-6">
                 {navLinks.map((link) => (
