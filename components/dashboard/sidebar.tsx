@@ -27,7 +27,7 @@ const navItems = [
     icon: LayoutDashboard,
   },
   {
-    label: "Berths",
+    label: "Berth Manager",
     href: "/dashboard/berths",
     icon: Ship,
   },
@@ -37,7 +37,7 @@ const navItems = [
     icon: Calendar,
   },
   {
-    label: "Settings",
+    label: "Agent Settings",
     href: "/dashboard/settings",
     icon: Settings,
   },

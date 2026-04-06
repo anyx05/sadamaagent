@@ -1,27 +1,128 @@
 "use client"
 
+import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Field, FieldGroup, FieldLabel, FieldDescription } from "@/components/ui/field"
-import { User, Building, Bell, Shield, Globe, Palette } from "lucide-react"
+import { User, Building, Bell, Shield, Bot, Sparkles, Globe } from "lucide-react"
+
+const defaultSystemPrompt = `You are SadamaAgent, a helpful AI assistant for Estonian marina and harbour operations. Your role is to assist boat owners, captains, and port operators with:
+
+- Berth reservations and availability inquiries
+- Marina facility information and amenities
+- Vessel requirements and documentation
+- Local maritime regulations and procedures
+- Weather and navigation guidance
+
+Always be professional, accurate, and helpful. Prioritize safety information when relevant.`
 
 export default function SettingsPage() {
+  const [systemPrompt, setSystemPrompt] = useState(defaultSystemPrompt)
+  const [language, setLanguage] = useState("en")
+
   return (
     <div className="space-y-6 max-w-4xl">
       {/* Page Header */}
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Settings</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">
+          Agent Settings
+        </h1>
         <p className="text-muted-foreground mt-1">
-          Manage your account and application preferences
+          Configure your AI assistant and application preferences
         </p>
       </div>
 
+      {/* AI Configuration - Glassmorphism Card */}
+      <Card className="relative overflow-hidden border-border/40 bg-gradient-to-br from-card/90 to-card/70 backdrop-blur-sm shadow-lg">
+        {/* Subtle gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-navy/[0.02] via-transparent to-amber/[0.02] pointer-events-none" />
+        
+        <CardHeader className="relative">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-11 h-11 rounded-xl bg-gradient-to-br from-navy to-navy-light text-white shadow-md shadow-navy/20">
+              <Bot className="w-5 h-5" />
+            </div>
+            <div>
+              <CardTitle className="text-lg flex items-center gap-2">
+                AI Configuration
+                <Sparkles className="w-4 h-4 text-amber" />
+              </CardTitle>
+              <CardDescription>
+                Customize how your AI assistant behaves and responds
+              </CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="relative space-y-6">
+          {/* System Prompt */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="systemPrompt" className="text-sm font-medium">
+                System Prompt
+              </Label>
+              <span className="text-xs text-muted-foreground">
+                {systemPrompt.length} characters
+              </span>
+            </div>
+            <Textarea
+              id="systemPrompt"
+              value={systemPrompt}
+              onChange={(e) => setSystemPrompt(e.target.value)}
+              placeholder="Enter instructions for how your AI assistant should behave..."
+              className="min-h-[200px] resize-y bg-background/50 border-border/50 focus:border-navy focus:ring-navy/20"
+            />
+            <p className="text-xs text-muted-foreground">
+              This prompt defines the personality, knowledge, and behavior of your marina AI assistant.
+            </p>
+          </div>
+
+          {/* Default Language */}
+          <div className="space-y-3">
+            <Label htmlFor="language" className="text-sm font-medium flex items-center gap-2">
+              <Globe className="w-4 h-4 text-muted-foreground" />
+              Default Language
+            </Label>
+            <Select value={language} onValueChange={setLanguage}>
+              <SelectTrigger className="w-full sm:w-[280px] bg-background/50 border-border/50">
+                <SelectValue placeholder="Select language" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="en">English</SelectItem>
+                <SelectItem value="et">Eesti (Estonian)</SelectItem>
+                <SelectItem value="ru">Русский (Russian)</SelectItem>
+                <SelectItem value="fi">Suomi (Finnish)</SelectItem>
+                <SelectItem value="sv">Svenska (Swedish)</SelectItem>
+                <SelectItem value="de">Deutsch (German)</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground">
+              The default language for AI responses. Users can still interact in any supported language.
+            </p>
+          </div>
+
+          <div className="flex justify-end pt-4 border-t border-border/30">
+            <Button className="bg-navy hover:bg-navy-light text-white shadow-md shadow-navy/20 transition-all duration-300 hover:-translate-y-0.5">
+              Save AI Settings
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Profile Settings */}
-      <Card>
+      <Card className="border-border/40 bg-card/80 backdrop-blur-sm">
         <CardHeader>
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-navy/10 text-navy">
+            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-navy/10 text-navy">
               <User className="w-5 h-5" />
             </div>
             <div>
@@ -72,16 +173,16 @@ export default function SettingsPage() {
       </Card>
 
       {/* Organization Settings */}
-      <Card>
+      <Card className="border-border/40 bg-card/80 backdrop-blur-sm">
         <CardHeader>
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-amber/10 text-amber">
+            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-amber/10 text-amber">
               <Building className="w-5 h-5" />
             </div>
             <div>
               <CardTitle className="text-lg">Organization</CardTitle>
               <CardDescription>
-                Configure your port authority details
+                Configure your marina authority details
               </CardDescription>
             </div>
           </div>
@@ -92,7 +193,7 @@ export default function SettingsPage() {
               <FieldLabel htmlFor="orgName">Organization Name</FieldLabel>
               <Input 
                 id="orgName" 
-                defaultValue="Tallinn Port Authority" 
+                defaultValue="Tallinn Marina Authority" 
                 className="h-10" 
               />
             </Field>
@@ -110,10 +211,10 @@ export default function SettingsPage() {
       </Card>
 
       {/* Notification Settings */}
-      <Card>
+      <Card className="border-border/40 bg-card/80 backdrop-blur-sm">
         <CardHeader>
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-600">
+            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600">
               <Bell className="w-5 h-5" />
             </div>
             <div>
@@ -127,14 +228,14 @@ export default function SettingsPage() {
         <CardContent>
           <div className="space-y-4">
             {[
-              { label: "Booking confirmations", description: "Get notified when a booking is confirmed", checked: true },
-              { label: "Vessel arrivals", description: "Receive alerts when vessels arrive at port", checked: true },
+              { label: "Booking confirmations", description: "Get notified when a berth booking is confirmed", checked: true },
+              { label: "Vessel arrivals", description: "Receive alerts when vessels arrive at marina", checked: true },
               { label: "Maintenance alerts", description: "Be notified about scheduled maintenance", checked: false },
-              { label: "Weekly reports", description: "Receive a weekly summary of port activities", checked: true },
+              { label: "Weekly reports", description: "Receive a weekly summary of marina activities", checked: true },
             ].map((item) => (
               <div 
                 key={item.label}
-                className="flex items-center justify-between py-3 border-b border-border last:border-0"
+                className="flex items-center justify-between py-3 border-b border-border/50 last:border-0"
               >
                 <div>
                   <p className="text-sm font-medium text-foreground">{item.label}</p>
@@ -155,10 +256,10 @@ export default function SettingsPage() {
       </Card>
 
       {/* Security Settings */}
-      <Card>
+      <Card className="border-border/40 bg-card/80 backdrop-blur-sm">
         <CardHeader>
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-rose-500/10 text-rose-600">
+            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-rose-500/10 text-rose-600">
               <Shield className="w-5 h-5" />
             </div>
             <div>
@@ -171,7 +272,7 @@ export default function SettingsPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="flex items-center justify-between py-3 border-b border-border">
+            <div className="flex items-center justify-between py-3 border-b border-border/50">
               <div>
                 <p className="text-sm font-medium text-foreground">Change Password</p>
                 <p className="text-xs text-muted-foreground">Update your password regularly for security</p>
@@ -180,7 +281,7 @@ export default function SettingsPage() {
                 Update
               </Button>
             </div>
-            <div className="flex items-center justify-between py-3 border-b border-border">
+            <div className="flex items-center justify-between py-3 border-b border-border/50">
               <div>
                 <p className="text-sm font-medium text-foreground">Two-Factor Authentication</p>
                 <p className="text-xs text-muted-foreground">Add an extra layer of security</p>
@@ -203,7 +304,7 @@ export default function SettingsPage() {
       </Card>
 
       {/* Danger Zone */}
-      <Card className="border-rose-200">
+      <Card className="border-rose-200/50 bg-card/80 backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="text-lg text-rose-600">Danger Zone</CardTitle>
           <CardDescription>

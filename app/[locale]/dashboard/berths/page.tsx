@@ -1,165 +1,235 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Ship, MapPin, Ruler, Waves, Plus } from "lucide-react"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { Ship, Plus, MoreHorizontal, Pencil, Trash2, Eye } from "lucide-react"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
+// Dummy berth data for presentation
 const berths = [
   {
     id: 1,
-    name: "Terminal A - Deep Water",
-    location: "Muuga Harbour",
-    depth: "16m",
-    length: "400m",
+    name: "Marina Slip A-01",
+    length: 12,
+    draft: 2.5,
+    price: 45,
     status: "available",
-    type: "Container",
-    currentVessel: null,
   },
   {
     id: 2,
-    name: "Terminal B - Cruise",
-    location: "Old City Harbour",
-    depth: "12m",
-    length: "350m",
+    name: "Marina Slip A-02",
+    length: 15,
+    draft: 3.0,
+    price: 55,
     status: "occupied",
-    type: "Passenger",
-    currentVessel: "SS Nordic Queen",
   },
   {
     id: 3,
-    name: "Terminal C - Cargo",
-    location: "Paldiski South",
-    depth: "14m",
-    length: "280m",
+    name: "Yacht Berth B-01",
+    length: 20,
+    draft: 4.0,
+    price: 85,
     status: "available",
-    type: "General Cargo",
-    currentVessel: null,
   },
   {
     id: 4,
-    name: "Terminal D - RoRo",
-    location: "Muuga Harbour",
-    depth: "10m",
-    length: "220m",
+    name: "Yacht Berth B-02",
+    length: 25,
+    draft: 4.5,
+    price: 110,
     status: "maintenance",
-    type: "RoRo",
-    currentVessel: null,
   },
   {
     id: 5,
-    name: "Terminal E - Tanker",
-    location: "Paldiski North",
-    depth: "18m",
-    length: "320m",
+    name: "Commercial Berth C-01",
+    length: 40,
+    draft: 6.0,
+    price: 180,
     status: "occupied",
-    type: "Liquid Bulk",
-    currentVessel: "MT Fuel Carrier",
   },
   {
     id: 6,
-    name: "Terminal F - Yacht",
-    location: "Old City Harbour",
-    depth: "6m",
-    length: "80m",
+    name: "Commercial Berth C-02",
+    length: 50,
+    draft: 8.0,
+    price: 250,
     status: "available",
-    type: "Leisure",
-    currentVessel: null,
+  },
+  {
+    id: 7,
+    name: "Small Craft Slip D-01",
+    length: 8,
+    draft: 1.5,
+    price: 25,
+    status: "available",
+  },
+  {
+    id: 8,
+    name: "Small Craft Slip D-02",
+    length: 8,
+    draft: 1.5,
+    price: 25,
+    status: "occupied",
   },
 ]
 
-const statusColors = {
-  available: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
-  occupied: "bg-navy/10 text-navy border-navy/20",
-  maintenance: "bg-amber/10 text-amber border-amber/20",
-}
-
-const statusLabels = {
-  available: "Available",
-  occupied: "Occupied",
-  maintenance: "Maintenance",
+const statusConfig = {
+  available: {
+    label: "Available",
+    className: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20 hover:bg-emerald-500/15",
+  },
+  occupied: {
+    label: "Occupied",
+    className: "bg-rose-500/10 text-rose-600 border-rose-500/20 hover:bg-rose-500/15",
+  },
+  maintenance: {
+    label: "Maintenance",
+    className: "bg-amber/10 text-amber border-amber/20 hover:bg-amber/15",
+  },
 }
 
 export default function BerthsPage() {
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Berths</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">
+            Berth Manager
+          </h1>
           <p className="text-muted-foreground mt-1">
-            Manage and monitor all berth facilities
+            Manage marina slips and berth facilities
           </p>
         </div>
-        <Button className="bg-navy hover:bg-navy-light text-white">
+        <Button className="bg-navy hover:bg-navy-light text-white shadow-md shadow-navy/20 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-navy/30">
           <Plus className="w-4 h-4 mr-2" />
-          Add Berth
+          Add New Berth
         </Button>
       </div>
 
-      {/* Berths Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        {berths.map((berth) => (
-          <Card 
-            key={berth.id}
-            className="hover:shadow-md transition-all cursor-pointer group"
-          >
-            <CardHeader className="pb-3">
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-navy/10 text-navy group-hover:bg-navy group-hover:text-white transition-colors">
-                    <Ship className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-base">{berth.name}</CardTitle>
-                    <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
-                      <MapPin className="w-3 h-3" />
-                      {berth.location}
-                    </p>
-                  </div>
-                </div>
-                <Badge 
-                  variant="outline"
-                  className={statusColors[berth.status as keyof typeof statusColors]}
-                >
-                  {statusLabels[berth.status as keyof typeof statusLabels]}
-                </Badge>
+      {/* Data Table Card */}
+      <Card className="border-border/40 bg-card/80 backdrop-blur-sm shadow-sm">
+        <CardHeader className="pb-4">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-navy/10 text-navy">
+              <Ship className="w-5 h-5" />
+            </div>
+            <div>
+              <CardTitle className="text-lg">All Berths</CardTitle>
+              <CardDescription>
+                {berths.length} berths across all facilities
+              </CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="px-0 pb-0">
+          <Table>
+            <TableHeader>
+              <TableRow className="hover:bg-transparent border-border/50">
+                <TableHead className="pl-6">Name</TableHead>
+                <TableHead className="text-right">Length (m)</TableHead>
+                <TableHead className="text-right">Draft (m)</TableHead>
+                <TableHead className="text-right">Price/Night</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="pr-6 text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {berths.map((berth) => {
+                const status = statusConfig[berth.status as keyof typeof statusConfig]
+                return (
+                  <TableRow
+                    key={berth.id}
+                    className="group hover:bg-muted/30 transition-colors border-border/30"
+                  >
+                    <TableCell className="pl-6 font-medium text-foreground">
+                      {berth.name}
+                    </TableCell>
+                    <TableCell className="text-right tabular-nums">
+                      {berth.length}
+                    </TableCell>
+                    <TableCell className="text-right tabular-nums">
+                      {berth.draft}
+                    </TableCell>
+                    <TableCell className="text-right tabular-nums font-medium">
+                      &euro;{berth.price}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className={status.className}>
+                        {status.label}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="pr-6 text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <MoreHorizontal className="w-4 h-4" />
+                            <span className="sr-only">Open menu</span>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-40">
+                          <DropdownMenuItem>
+                            <Eye className="w-4 h-4 mr-2" />
+                            View Details
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <Pencil className="w-4 h-4 mr-2" />
+                            Edit Berth
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem className="text-destructive focus:text-destructive">
+                            <Trash2 className="w-4 h-4 mr-2" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                )
+              })}
+            </TableBody>
+          </Table>
+
+          {/* Table Footer */}
+          <div className="flex items-center justify-between px-6 py-4 border-t border-border/30 bg-muted/20">
+            <p className="text-sm text-muted-foreground">
+              Showing <span className="font-medium text-foreground">{berths.length}</span> of{" "}
+              <span className="font-medium text-foreground">{berths.length}</span> berths
+            </p>
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                {berths.filter((b) => b.status === "available").length} Available
               </div>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div className="flex items-center gap-2">
-                  <Waves className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-sm">
-                    <span className="font-medium text-foreground">{berth.depth}</span>
-                    <span className="text-muted-foreground ml-1">depth</span>
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Ruler className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-sm">
-                    <span className="font-medium text-foreground">{berth.length}</span>
-                    <span className="text-muted-foreground ml-1">length</span>
-                  </span>
-                </div>
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <span className="w-2 h-2 rounded-full bg-rose-500" />
+                {berths.filter((b) => b.status === "occupied").length} Occupied
               </div>
-              
-              <div className="pt-3 border-t border-border">
-                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
-                  {berth.type}
-                </p>
-                {berth.currentVessel ? (
-                  <p className="text-sm font-medium text-foreground">
-                    {berth.currentVessel}
-                  </p>
-                ) : (
-                  <p className="text-sm text-muted-foreground italic">
-                    No vessel docked
-                  </p>
-                )}
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <span className="w-2 h-2 rounded-full bg-amber" />
+                {berths.filter((b) => b.status === "maintenance").length} Maintenance
               </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }
