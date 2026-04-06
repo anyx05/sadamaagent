@@ -10,7 +10,8 @@ import {
   LogOut, 
   ChevronLeft,
   LayoutDashboard,
-  User
+  User,
+  X
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -18,6 +19,8 @@ import { Button } from "@/components/ui/button"
 interface SidebarProps {
   collapsed: boolean
   onToggle: () => void
+  mobileOpen?: boolean
+  onMobileClose?: () => void
 }
 
 const navItems = [
@@ -43,24 +46,87 @@ const navItems = [
   },
 ]
 
-export function DashboardSidebar({ collapsed, onToggle }: SidebarProps) {
+export function DashboardSidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: SidebarProps) {
   const pathname = usePathname()
 
   return (
-    <aside 
-      className={cn(
-        "fixed left-0 top-0 z-40 h-screen bg-navy text-white transition-all duration-300 flex flex-col",
-        collapsed ? "w-[72px]" : "w-64"
+    <>
+      {/* Mobile Overlay */}
+      {mobileOpen && (
+        <div 
+          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden"
+          onClick={onMobileClose}
+        />
       )}
-    >
+      
+      <aside 
+        className={cn(
+          "fixed left-0 top-0 z-50 h-screen bg-navy/95 backdrop-blur-xl border-r border-white/5 text-white transition-all duration-300 flex flex-col",
+          // Desktop
+          "hidden lg:flex",
+          collapsed ? "lg:w-[72px]" : "lg:w-64",
+        )}
+      >
+        <SidebarContent 
+          collapsed={collapsed} 
+          onToggle={onToggle}
+          pathname={pathname}
+          showCollapseButton
+        />
+      </aside>
+      
+      {/* Mobile Sidebar */}
+      <aside 
+        className={cn(
+          "fixed left-0 top-0 z-50 h-screen w-72 bg-navy/95 backdrop-blur-xl border-r border-white/5 text-white transition-transform duration-300 flex flex-col lg:hidden",
+          mobileOpen ? "translate-x-0" : "-translate-x-full"
+        )}
+      >
+        {/* Mobile Close Button */}
+        <button
+          onClick={onMobileClose}
+          className="absolute top-4 right-4 p-2 rounded-lg text-white/50 hover:text-white hover:bg-white/10 transition-colors"
+        >
+          <X className="w-5 h-5" />
+        </button>
+        
+        <SidebarContent 
+          collapsed={false} 
+          onToggle={onToggle}
+          pathname={pathname}
+          onNavigate={onMobileClose}
+        />
+      </aside>
+    </>
+  )
+}
+
+function SidebarContent({ 
+  collapsed, 
+  onToggle, 
+  pathname,
+  showCollapseButton,
+  onNavigate
+}: { 
+  collapsed: boolean
+  onToggle: () => void
+  pathname: string
+  showCollapseButton?: boolean
+  onNavigate?: () => void
+}) {
+  return (
+    <>
       {/* Header */}
-      <div className="flex items-center h-16 px-4 border-b border-white/10">
-        <Link href="/" className="flex items-center gap-3">
-          <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-amber text-navy shrink-0">
-            <Anchor className="w-5 h-5" />
+      <div className="flex items-center h-16 px-4 border-b border-white/5">
+        <Link href="/" className="flex items-center gap-3" onClick={onNavigate}>
+          <div className="relative">
+            <div className="absolute -inset-1 bg-cyan/20 rounded-xl blur-md opacity-50" />
+            <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-cyan to-cyan-dark text-white shrink-0">
+              <Anchor className="w-5 h-5" />
+            </div>
           </div>
           <span className={cn(
-            "font-semibold text-lg whitespace-nowrap transition-opacity duration-300",
+            "font-semibold text-lg tracking-tight whitespace-nowrap transition-opacity duration-300",
             collapsed ? "opacity-0 w-0" : "opacity-100"
           )}>
             SadamaAgent
@@ -70,23 +136,34 @@ export function DashboardSidebar({ collapsed, onToggle }: SidebarProps) {
 
       {/* Navigation */}
       <nav className="flex-1 py-6 px-3 overflow-y-auto">
+        <p className={cn(
+          "text-[10px] uppercase tracking-wider text-white/30 font-medium mb-3 px-3 transition-opacity",
+          collapsed && "opacity-0"
+        )}>
+          Navigation
+        </p>
         <ul className="space-y-1">
           {navItems.map((item) => {
-            const isActive = pathname === item.href
+            const isActive = pathname === item.href || pathname.startsWith(item.href + "/")
             return (
               <li key={item.href}>
                 <Link
                   href={item.href}
+                  onClick={onNavigate}
                   className={cn(
-                    "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group",
+                    "relative flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-300 group",
                     isActive 
-                      ? "bg-white/15 text-white" 
-                      : "text-white/70 hover:bg-white/10 hover:text-white"
+                      ? "bg-cyan/10 text-white" 
+                      : "text-white/60 hover:bg-white/5 hover:text-white"
                   )}
                 >
+                  {/* Active Indicator */}
+                  {isActive && (
+                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-cyan rounded-r-full" />
+                  )}
                   <item.icon className={cn(
-                    "w-5 h-5 shrink-0 transition-colors",
-                    isActive ? "text-amber" : "group-hover:text-amber"
+                    "w-5 h-5 shrink-0 transition-colors duration-300",
+                    isActive ? "text-cyan" : "group-hover:text-cyan"
                   )} />
                   <span className={cn(
                     "whitespace-nowrap transition-opacity duration-300",
@@ -102,13 +179,13 @@ export function DashboardSidebar({ collapsed, onToggle }: SidebarProps) {
       </nav>
 
       {/* Footer */}
-      <div className="mt-auto border-t border-white/10 p-3">
+      <div className="mt-auto border-t border-white/5 p-3">
         {/* User Profile */}
         <div className={cn(
-          "flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white/5 mb-3 transition-all duration-300",
+          "flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white/[0.03] border border-white/5 mb-3 transition-all duration-300",
           collapsed && "justify-center"
         )}>
-          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-amber/20 text-amber shrink-0">
+          <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-cyan/20 to-cyan/10 text-cyan shrink-0 ring-1 ring-cyan/20">
             <User className="w-4 h-4" />
           </div>
           <div className={cn(
@@ -116,15 +193,16 @@ export function DashboardSidebar({ collapsed, onToggle }: SidebarProps) {
             collapsed ? "opacity-0 w-0" : "opacity-100"
           )}>
             <p className="text-sm font-medium truncate">Captain Admin</p>
-            <p className="text-xs text-white/50 truncate">admin@maritime.ee</p>
+            <p className="text-xs text-white/40 truncate">admin@maritime.ee</p>
           </div>
         </div>
 
         {/* Logout */}
         <Link
           href="/login"
+          onClick={onNavigate}
           className={cn(
-            "flex items-center gap-3 px-3 py-2.5 rounded-lg text-white/70 hover:bg-white/10 hover:text-white transition-all duration-200",
+            "flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/50 hover:bg-white/5 hover:text-white transition-all duration-300",
             collapsed && "justify-center"
           )}
         >
@@ -137,28 +215,30 @@ export function DashboardSidebar({ collapsed, onToggle }: SidebarProps) {
           </span>
         </Link>
 
-        {/* Collapse Toggle */}
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onToggle}
-          className={cn(
-            "w-full mt-3 text-white/70 hover:text-white hover:bg-white/10 transition-all duration-200",
-            collapsed && "px-0"
-          )}
-        >
-          <ChevronLeft className={cn(
-            "w-5 h-5 transition-transform duration-300",
-            collapsed && "rotate-180"
-          )} />
-          <span className={cn(
-            "ml-2 transition-opacity duration-300",
-            collapsed ? "opacity-0 w-0" : "opacity-100"
-          )}>
-            Collapse
-          </span>
-        </Button>
+        {/* Collapse Toggle - Desktop Only */}
+        {showCollapseButton && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onToggle}
+            className={cn(
+              "w-full mt-3 text-white/50 hover:text-white hover:bg-white/5 transition-all duration-300",
+              collapsed && "px-0"
+            )}
+          >
+            <ChevronLeft className={cn(
+              "w-5 h-5 transition-transform duration-300",
+              collapsed && "rotate-180"
+            )} />
+            <span className={cn(
+              "ml-2 transition-opacity duration-300",
+              collapsed ? "opacity-0 w-0" : "opacity-100"
+            )}>
+              Collapse
+            </span>
+          </Button>
+        )}
       </div>
-    </aside>
+    </>
   )
 }
