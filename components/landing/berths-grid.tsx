@@ -2,70 +2,8 @@
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Anchor, Ship, Ruler, Waves, MapPin, Clock } from "lucide-react"
-
-const berths = [
-  {
-    id: 1,
-    name: "Terminal A - Deep Water",
-    location: "Muuga Harbour",
-    depth: "16m",
-    length: "400m",
-    status: "available",
-    type: "Container",
-    featured: true,
-  },
-  {
-    id: 2,
-    name: "Terminal B - Cruise",
-    location: "Old City Harbour",
-    depth: "12m",
-    length: "350m",
-    status: "occupied",
-    type: "Passenger",
-    featured: false,
-  },
-  {
-    id: 3,
-    name: "Terminal C - Cargo",
-    location: "Paldiski South",
-    depth: "14m",
-    length: "280m",
-    status: "available",
-    type: "General Cargo",
-    featured: false,
-  },
-  {
-    id: 4,
-    name: "Terminal D - RoRo",
-    location: "Muuga Harbour",
-    depth: "10m",
-    length: "220m",
-    status: "maintenance",
-    type: "RoRo",
-    featured: false,
-  },
-  {
-    id: 5,
-    name: "Terminal E - Tanker",
-    location: "Paldiski North",
-    depth: "18m",
-    length: "320m",
-    status: "available",
-    type: "Liquid Bulk",
-    featured: true,
-  },
-  {
-    id: 6,
-    name: "Terminal F - Yacht",
-    location: "Old City Harbour",
-    depth: "6m",
-    length: "80m",
-    status: "available",
-    type: "Leisure",
-    featured: false,
-  },
-]
+import { Anchor, Ship, Ruler, Waves, MapPin, Clock, Euro } from "lucide-react"
+import { useBerths } from "@/lib/queries/berths"
 
 const statusColors = {
   available: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
@@ -80,6 +18,8 @@ const statusLabels = {
 }
 
 export function BerthsGrid() {
+  const { data: berths, isLoading, error } = useBerths()
+
   return (
     <section id="berths" className="py-24 bg-secondary/30">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
@@ -98,74 +38,112 @@ export function BerthsGrid() {
 
         {/* Bento Grid Layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr">
-          {berths.map((berth, index) => (
-            <Card 
-              key={berth.id}
-              className={`group relative overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-pointer border-border/50 ${
-                berth.featured ? "md:col-span-2 lg:col-span-1 lg:row-span-2" : ""
-              } ${index === 0 ? "lg:col-span-2" : ""}`}
-            >
-              <div className={`absolute inset-0 bg-navy/[0.02] group-hover:bg-navy/[0.04] transition-colors ${
-                berth.featured ? "bg-navy/[0.04]" : ""
-              }`} />
-              
-              <CardContent className={`relative flex flex-col h-full p-6 ${
-                berth.featured && index !== 0 ? "lg:py-8" : ""
-              }`}>
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-navy/10 text-navy group-hover:bg-navy group-hover:text-white transition-colors">
-                    <Ship className="w-5 h-5" />
+          {isLoading ? (
+            Array.from({ length: 6 }).map((_, index) => (
+              <Card 
+                key={index}
+                className={`group relative overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-pointer border-border/50 ${
+                  index % 5 === 0 ? "md:col-span-2 lg:col-span-1 lg:row-span-2" : ""
+                } ${index === 0 ? "lg:col-span-2" : ""}`}
+              >
+                <div className={`absolute inset-0 bg-navy/[0.02] group-hover:bg-navy/[0.04] transition-colors ${
+                  index % 5 === 0 ? "bg-navy/[0.04]" : ""
+                }`} />
+                <CardContent className={`relative flex flex-col h-full p-6 ${
+                  index % 5 === 0 && index !== 0 ? "lg:py-8" : ""
+                }`}>
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="w-10 h-10 rounded-lg bg-navy/10 animate-pulse" />
+                    <div className="w-20 h-6 bg-slate-200 animate-pulse rounded-full" />
                   </div>
-                  <Badge 
-                    variant="outline" 
-                    className={`${statusColors[berth.status as keyof typeof statusColors]} font-medium`}
-                  >
-                    {statusLabels[berth.status as keyof typeof statusLabels]}
-                  </Badge>
-                </div>
-
-                <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-navy transition-colors">
-                  {berth.name}
-                </h3>
-                
-                <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-4">
-                  <MapPin className="w-4 h-4" />
-                  {berth.location}
-                </div>
-
-                <div className="mt-auto">
-                  <div className="flex items-center gap-1.5 mb-2">
-                    <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      {berth.type}
-                    </span>
-                  </div>
+                  <div className="w-3/4 h-6 bg-slate-200 animate-pulse rounded my-2" />
+                  <div className="w-1/2 h-4 bg-slate-200 animate-pulse rounded mb-4" />
                   
-                  <div className="grid grid-cols-2 gap-3 pt-4 border-t border-border/50">
-                    <div className="flex items-center gap-2">
-                      <Waves className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-sm">
-                        <span className="font-medium text-foreground">{berth.depth}</span>
-                        <span className="text-muted-foreground ml-1">depth</span>
-                      </span>
+                  <div className="mt-auto">
+                    <div className="flex gap-2 mb-4">
+                      <div className="w-16 h-5 bg-slate-200 animate-pulse rounded-md" />
+                      <div className="w-16 h-5 bg-slate-200 animate-pulse rounded-md" />
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Ruler className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-sm">
-                        <span className="font-medium text-foreground">{berth.length}</span>
-                        <span className="text-muted-foreground ml-1">length</span>
-                      </span>
+                    <div className="grid grid-cols-2 gap-3 pt-4 border-t border-border/50">
+                       <div className="w-20 h-5 bg-slate-200 animate-pulse rounded" />
+                       <div className="w-20 h-5 bg-slate-200 animate-pulse rounded" />
                     </div>
                   </div>
-                </div>
+                </CardContent>
+              </Card>
+            ))
+          ) : error ? (
+            <div className="col-span-full py-12 text-center text-rose-500">
+              Error fetching berths: {error.message}
+            </div>
+          ) : berths && berths.length > 0 ? (
+            berths.map((berth, index) => (
+              <Card 
+                key={berth.id}
+                className={`group relative overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-pointer border-border/50 ${
+                  index === 0 ? "lg:col-span-2 bg-navy/[0.04]" : ""
+                }`}
+              >
+                <div className={`absolute inset-0 bg-navy/[0.02] group-hover:bg-navy/[0.04] transition-colors ${
+                  index === 0 ? "bg-navy/[0.02]" : ""
+                }`} />
+                
+                <CardContent className="relative flex flex-col h-full p-6">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-navy/10 text-navy group-hover:bg-navy group-hover:text-white transition-colors">
+                      <Ship className="w-5 h-5" />
+                    </div>
+                    <Badge 
+                      variant="outline" 
+                      className={`${statusColors[(berth.status as keyof typeof statusColors) || "available"]} font-medium`}
+                    >
+                      {statusLabels[(berth.status as keyof typeof statusLabels) || "available"]}
+                    </Badge>
+                  </div>
 
-                {berth.featured && (
-                  <div className="absolute top-4 right-4">
-                    <div className="w-2 h-2 rounded-full bg-amber animate-pulse" />
+                  <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-navy transition-colors">
+                    {berth.name}
+                  </h3>
+                  
+                  <div className="flex items-center gap-1.5 text-sm font-medium text-foreground mb-4">
+                    <Euro className="w-4 h-4 text-muted-foreground" />
+                    {berth.price_per_night} <span className="text-muted-foreground font-normal">/ night</span>
                   </div>
-                )}
-              </CardContent>
-            </Card>
-          ))}
+
+                  <div className="mt-auto">
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {berth.amenities?.map((amenity, i) => (
+                        <Badge key={i} variant="secondary" className="bg-secondary text-secondary-foreground font-normal text-xs px-2 py-0.5 pointer-events-none">
+                          {amenity}
+                        </Badge>
+                      ))}
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-3 pt-4 border-t border-border/50">
+                      <div className="flex items-center gap-2">
+                        <Waves className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-sm">
+                          <span className="font-medium text-foreground">{berth.max_draft}m</span>
+                          <span className="text-muted-foreground ml-1">draft</span>
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Ruler className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-sm">
+                          <span className="font-medium text-foreground">{berth.max_vessel_length}m</span>
+                          <span className="text-muted-foreground ml-1">length</span>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          ) : (
+            <div className="col-span-full py-12 text-center text-muted-foreground">
+              No berths found for this port.
+            </div>
+          )}
         </div>
 
         {/* Quick Info Bar */}

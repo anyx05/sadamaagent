@@ -1,0 +1,21 @@
+{
+  "hero": {
+    "title": "Broneeri kaikoht lihtsalt",
+    "subtitle": "Leia saadaval olev koht Eesti sadamates",
+    "cta": "Räägi sadamaassistendiga"
+  },
+  "services": {
+    "title": "Saadaolevad kaikohad"
+  },
+  "nav": {
+    "dashboard": "Töölaud",
+    "logout": "Logi välja"
+  },
+  "chat": {
+    "placeholder": "Kirjuta siia...",
+    "send": "Saada"
+  },
+  "footer": {
+    "built": "Ehitatud AI Web Session 2026 raames"
+  }
+}

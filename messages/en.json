@@ -1,0 +1,21 @@
+{
+  "hero": {
+    "title": "Book a berth with ease",
+    "subtitle": "Find an available spot in Estonian ports",
+    "cta": "Talk to the port assistant"
+  },
+  "services": {
+    "title": "Available berths"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "logout": "Log out"
+  },
+  "chat": {
+    "placeholder": "Type here...",
+    "send": "Send"
+  },
+  "footer": {
+    "built": "Built during AI Web Session 2026"
+  }
+}
