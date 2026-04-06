@@ -3,13 +3,18 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Estonian Maritime Theme - Navy, White, Amber */
+/* Premium Maritime Theme - Deep Navy, Slate, Cyan */
 :root {
-  --navy: #002344;
+  --navy: #0a1628;
   --white: #FFFFFF;
   --amber: #FFBF00;
-  --navy-light: #003366;
-  --navy-dark: #001a33;
+  --navy-light: #152238;
+  --navy-dark: #050d18;
+  --cyan: #06b6d4;
+  --cyan-light: #22d3ee;
+  --cyan-dark: #0891b2;
+  --slate: #1e293b;
+  --slate-light: #334155;
   
   --background: var(--white);
   --foreground: var(--navy);
@@ -53,6 +58,11 @@
   --color-navy-light: var(--navy-light);
   --color-navy-dark: var(--navy-dark);
   --color-amber: var(--amber);
+  --color-cyan: var(--cyan);
+  --color-cyan-light: var(--cyan-light);
+  --color-cyan-dark: var(--cyan-dark);
+  --color-slate: var(--slate);
+  --color-slate-light: var(--slate-light);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);

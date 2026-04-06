@@ -1,165 +1,355 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+"use client"
+
+import { useState } from "react"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Ship, MapPin, Ruler, Waves, Plus } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Ship, Plus, Pencil, Trash2, Check, X } from "lucide-react"
 
-const berths = [
-  {
-    id: 1,
-    name: "Terminal A - Deep Water",
-    location: "Muuga Harbour",
-    depth: "16m",
-    length: "400m",
-    status: "available",
-    type: "Container",
-    currentVessel: null,
-  },
-  {
-    id: 2,
-    name: "Terminal B - Cruise",
-    location: "Old City Harbour",
-    depth: "12m",
-    length: "350m",
-    status: "occupied",
-    type: "Passenger",
-    currentVessel: "SS Nordic Queen",
-  },
-  {
-    id: 3,
-    name: "Terminal C - Cargo",
-    location: "Paldiski South",
-    depth: "14m",
-    length: "280m",
-    status: "available",
-    type: "General Cargo",
-    currentVessel: null,
-  },
-  {
-    id: 4,
-    name: "Terminal D - RoRo",
-    location: "Muuga Harbour",
-    depth: "10m",
-    length: "220m",
-    status: "maintenance",
-    type: "RoRo",
-    currentVessel: null,
-  },
-  {
-    id: 5,
-    name: "Terminal E - Tanker",
-    location: "Paldiski North",
-    depth: "18m",
-    length: "320m",
-    status: "occupied",
-    type: "Liquid Bulk",
-    currentVessel: "MT Fuel Carrier",
-  },
-  {
-    id: 6,
-    name: "Terminal F - Yacht",
-    location: "Old City Harbour",
-    depth: "6m",
-    length: "80m",
-    status: "available",
-    type: "Leisure",
-    currentVessel: null,
-  },
-]
+type BerthStatus = "available" | "occupied" | "maintenance"
 
-const statusColors = {
-  available: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
-  occupied: "bg-navy/10 text-navy border-navy/20",
-  maintenance: "bg-amber/10 text-amber border-amber/20",
+interface Berth {
+  id: number
+  name: string
+  length: number
+  draft: number
+  price: number
+  status: BerthStatus
 }
 
-const statusLabels = {
-  available: "Available",
-  occupied: "Occupied",
-  maintenance: "Maintenance",
+// Initial berth data
+const initialBerths: Berth[] = [
+  { id: 1, name: "Marina Slip A-01", length: 12, draft: 2.5, price: 45, status: "available" },
+  { id: 2, name: "Marina Slip A-02", length: 15, draft: 3.0, price: 55, status: "occupied" },
+  { id: 3, name: "Yacht Berth B-01", length: 20, draft: 4.0, price: 85, status: "available" },
+  { id: 4, name: "Yacht Berth B-02", length: 25, draft: 4.5, price: 110, status: "maintenance" },
+  { id: 5, name: "Commercial Berth C-01", length: 40, draft: 6.0, price: 180, status: "occupied" },
+  { id: 6, name: "Commercial Berth C-02", length: 50, draft: 8.0, price: 250, status: "available" },
+  { id: 7, name: "Small Craft Slip D-01", length: 8, draft: 1.5, price: 25, status: "available" },
+  { id: 8, name: "Small Craft Slip D-02", length: 8, draft: 1.5, price: 25, status: "occupied" },
+]
+
+const statusConfig = {
+  available: {
+    label: "Available",
+    className: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
+  },
+  occupied: {
+    label: "Occupied",
+    className: "bg-rose-500/10 text-rose-600 border-rose-500/20",
+  },
+  maintenance: {
+    label: "Maintenance",
+    className: "bg-amber/10 text-amber border-amber/20",
+  },
 }
 
 export default function BerthsPage() {
+  const [berths, setBerths] = useState<Berth[]>(initialBerths)
+  const [editingId, setEditingId] = useState<number | null>(null)
+  const [editForm, setEditForm] = useState<Berth | null>(null)
+
+  const startEdit = (berth: Berth) => {
+    setEditingId(berth.id)
+    setEditForm({ ...berth })
+  }
+
+  const cancelEdit = () => {
+    setEditingId(null)
+    setEditForm(null)
+  }
+
+  const saveEdit = () => {
+    if (!editForm) return
+    setBerths(berths.map(b => b.id === editForm.id ? editForm : b))
+    setEditingId(null)
+    setEditForm(null)
+  }
+
+  const deleteBerth = (id: number) => {
+    setBerths(berths.filter(b => b.id !== id))
+  }
+
+  const addBerth = () => {
+    const newId = Math.max(...berths.map(b => b.id)) + 1
+    const newBerth: Berth = {
+      id: newId,
+      name: `New Berth ${newId}`,
+      length: 10,
+      draft: 2.0,
+      price: 50,
+      status: "available",
+    }
+    setBerths([...berths, newBerth])
+    startEdit(newBerth)
+  }
+
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Berths</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">
+            Berth Manager
+          </h1>
           <p className="text-muted-foreground mt-1">
-            Manage and monitor all berth facilities
+            Full CRUD management for marina berths
           </p>
         </div>
-        <Button className="bg-navy hover:bg-navy-light text-white">
+        <Button 
+          onClick={addBerth}
+          className="bg-navy hover:bg-navy-light text-white shadow-md shadow-navy/20 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-navy/30"
+        >
           <Plus className="w-4 h-4 mr-2" />
-          Add Berth
+          Add New Berth
         </Button>
       </div>
 
-      {/* Berths Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        {berths.map((berth) => (
-          <Card 
-            key={berth.id}
-            className="hover:shadow-md transition-all cursor-pointer group"
-          >
-            <CardHeader className="pb-3">
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-navy/10 text-navy group-hover:bg-navy group-hover:text-white transition-colors">
-                    <Ship className="w-5 h-5" />
+      {/* Data Table Card */}
+      <Card className="border-border/40 bg-card/80 backdrop-blur-sm shadow-sm">
+        <CardHeader className="pb-4">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-cyan/10 text-cyan">
+              <Ship className="w-5 h-5" />
+            </div>
+            <div>
+              <CardTitle className="text-lg">All Berths</CardTitle>
+              <CardDescription>
+                {berths.length} berths across all facilities. Click edit to modify inline.
+              </CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="px-0 pb-0">
+          {/* Desktop Table */}
+          <div className="hidden sm:block overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow className="hover:bg-transparent border-border/50">
+                  <TableHead className="pl-6 min-w-[180px]">Name</TableHead>
+                  <TableHead className="text-right min-w-[100px]">Length (m)</TableHead>
+                  <TableHead className="text-right min-w-[100px]">Draft (m)</TableHead>
+                  <TableHead className="text-right min-w-[120px]">Price/Night</TableHead>
+                  <TableHead className="min-w-[130px]">Status</TableHead>
+                  <TableHead className="pr-6 text-right min-w-[120px]">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {berths.map((berth) => {
+                  const isEditing = editingId === berth.id
+                  const status = statusConfig[berth.status]
+                  
+                  return (
+                    <TableRow
+                      key={berth.id}
+                      className="group hover:bg-muted/30 transition-colors border-border/30"
+                    >
+                      <TableCell className="pl-6">
+                        {isEditing ? (
+                          <Input
+                            value={editForm?.name || ""}
+                            onChange={(e) => setEditForm(prev => prev ? { ...prev, name: e.target.value } : null)}
+                            className="h-8 w-full bg-background/50"
+                          />
+                        ) : (
+                          <span className="font-medium text-foreground">{berth.name}</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {isEditing ? (
+                          <Input
+                            type="number"
+                            value={editForm?.length || 0}
+                            onChange={(e) => setEditForm(prev => prev ? { ...prev, length: parseFloat(e.target.value) || 0 } : null)}
+                            className="h-8 w-20 ml-auto bg-background/50 text-right"
+                          />
+                        ) : (
+                          <span className="tabular-nums">{berth.length}</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {isEditing ? (
+                          <Input
+                            type="number"
+                            step="0.1"
+                            value={editForm?.draft || 0}
+                            onChange={(e) => setEditForm(prev => prev ? { ...prev, draft: parseFloat(e.target.value) || 0 } : null)}
+                            className="h-8 w-20 ml-auto bg-background/50 text-right"
+                          />
+                        ) : (
+                          <span className="tabular-nums">{berth.draft}</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {isEditing ? (
+                          <Input
+                            type="number"
+                            value={editForm?.price || 0}
+                            onChange={(e) => setEditForm(prev => prev ? { ...prev, price: parseFloat(e.target.value) || 0 } : null)}
+                            className="h-8 w-24 ml-auto bg-background/50 text-right"
+                          />
+                        ) : (
+                          <span className="tabular-nums font-medium">&euro;{berth.price}</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {isEditing ? (
+                          <Select
+                            value={editForm?.status}
+                            onValueChange={(value: BerthStatus) => setEditForm(prev => prev ? { ...prev, status: value } : null)}
+                          >
+                            <SelectTrigger className="h-8 w-[120px] bg-background/50">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="available">Available</SelectItem>
+                              <SelectItem value="occupied">Occupied</SelectItem>
+                              <SelectItem value="maintenance">Maintenance</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        ) : (
+                          <Badge variant="outline" className={status.className}>
+                            {status.label}
+                          </Badge>
+                        )}
+                      </TableCell>
+                      <TableCell className="pr-6 text-right">
+                        {isEditing ? (
+                          <div className="flex items-center justify-end gap-1">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={saveEdit}
+                              className="h-8 w-8 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-500/10"
+                            >
+                              <Check className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={cancelEdit}
+                              className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                            >
+                              <X className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => startEdit(berth)}
+                              className="h-8 w-8 text-muted-foreground hover:text-cyan"
+                            >
+                              <Pencil className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => deleteBerth(berth.id)}
+                              className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  )
+                })}
+              </TableBody>
+            </Table>
+          </div>
+
+          {/* Mobile Cards */}
+          <div className="sm:hidden divide-y divide-border/30">
+            {berths.map((berth) => {
+              const status = statusConfig[berth.status]
+              return (
+                <div key={berth.id} className="p-4 space-y-3">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="font-medium text-foreground">{berth.name}</p>
+                      <Badge variant="outline" className={`${status.className} mt-1`}>
+                        {status.label}
+                      </Badge>
+                    </div>
+                    <div className="flex gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => startEdit(berth)}
+                        className="h-8 w-8"
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => deleteBerth(berth.id)}
+                        className="h-8 w-8 text-destructive"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </div>
-                  <div>
-                    <CardTitle className="text-base">{berth.name}</CardTitle>
-                    <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
-                      <MapPin className="w-3 h-3" />
-                      {berth.location}
-                    </p>
+                  <div className="grid grid-cols-3 gap-4 text-sm">
+                    <div>
+                      <p className="text-muted-foreground text-xs">Length</p>
+                      <p className="font-medium tabular-nums">{berth.length}m</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground text-xs">Draft</p>
+                      <p className="font-medium tabular-nums">{berth.draft}m</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground text-xs">Price</p>
+                      <p className="font-medium tabular-nums">&euro;{berth.price}</p>
+                    </div>
                   </div>
                 </div>
-                <Badge 
-                  variant="outline"
-                  className={statusColors[berth.status as keyof typeof statusColors]}
-                >
-                  {statusLabels[berth.status as keyof typeof statusLabels]}
-                </Badge>
+              )
+            })}
+          </div>
+
+          {/* Table Footer */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 sm:px-6 py-4 border-t border-border/30 bg-muted/20">
+            <p className="text-sm text-muted-foreground">
+              <span className="font-medium text-foreground">{berths.length}</span> berths total
+            </p>
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                {berths.filter((b) => b.status === "available").length} Available
               </div>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div className="flex items-center gap-2">
-                  <Waves className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-sm">
-                    <span className="font-medium text-foreground">{berth.depth}</span>
-                    <span className="text-muted-foreground ml-1">depth</span>
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Ruler className="w-4 h-4 text-muted-foreground" />
-                  <span className="text-sm">
-                    <span className="font-medium text-foreground">{berth.length}</span>
-                    <span className="text-muted-foreground ml-1">length</span>
-                  </span>
-                </div>
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <span className="w-2 h-2 rounded-full bg-rose-500" />
+                {berths.filter((b) => b.status === "occupied").length} Occupied
               </div>
-              
-              <div className="pt-3 border-t border-border">
-                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
-                  {berth.type}
-                </p>
-                {berth.currentVessel ? (
-                  <p className="text-sm font-medium text-foreground">
-                    {berth.currentVessel}
-                  </p>
-                ) : (
-                  <p className="text-sm text-muted-foreground italic">
-                    No vessel docked
-                  </p>
-                )}
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <span className="w-2 h-2 rounded-full bg-amber" />
+                {berths.filter((b) => b.status === "maintenance").length} Maintenance
               </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }
