@@ -17,19 +17,38 @@ import {
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { User, Building, Bell, Shield, Bot, Sparkles, Globe, Zap, Code } from "lucide-react"
 
-const defaultSystemPrompt = `You are SadamaAgent, a helpful AI assistant for Estonian marina and harbour operations. Your role is to assist boat owners, captains, and port operators with:
-
-- Berth reservations and availability inquiries
-- Marina facility information and amenities
-- Vessel requirements and documentation
-- Local maritime regulations and procedures
-- Weather and navigation guidance
-
-Always be professional, accurate, and helpful. Prioritize safety information when relevant.`
+import { useEffect } from "react"
+import { useAgentSettings, useUpdateAgentSettings } from "@/lib/queries/settings"
+import { toast } from "sonner"
 
 export default function SettingsPage() {
-  const [systemPrompt, setSystemPrompt] = useState(defaultSystemPrompt)
+  const { data: settings, isLoading } = useAgentSettings()
+  const { mutate: updateSettings, isPending: isSaving } = useUpdateAgentSettings()
+
+  const [systemPrompt, setSystemPrompt] = useState("")
   const [language, setLanguage] = useState("en")
+
+  useEffect(() => {
+    if (settings) {
+      setSystemPrompt(settings.systemPrompt)
+      setLanguage(settings.language)
+    }
+  }, [settings])
+
+  const handleSaveSettings = () => {
+    updateSettings({
+      systemPrompt,
+      language
+    }, {
+      onSuccess: () => {
+        toast.success("AI Configuration saved to database.")
+      },
+      onError: (err) => {
+        toast.error("Failed to save settings: " + err.message)
+      }
+    })
+  }
+
   const [notifications, setNotifications] = useState({
     bookings: true,
     arrivals: true,
@@ -190,8 +209,12 @@ export default function SettingsPage() {
           </div>
 
           <div className="flex justify-end pt-4 border-t border-white/10">
-            <Button className="bg-cyan hover:bg-cyan-light text-navy font-semibold shadow-lg shadow-cyan/25 transition-all duration-300 hover:-translate-y-0.5">
-              Save AI Settings
+            <Button 
+              onClick={handleSaveSettings}
+              disabled={isSaving || isLoading}
+              className="bg-cyan hover:bg-cyan-light text-navy font-semibold shadow-lg shadow-cyan/25 transition-all duration-300 hover:-translate-y-0.5"
+            >
+              {isSaving ? "Saving..." : "Save AI Settings"}
             </Button>
           </div>
         </CardContent>

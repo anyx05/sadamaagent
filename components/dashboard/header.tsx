@@ -10,6 +10,8 @@ interface DashboardHeaderProps {
   onMenuClick: () => void
 }
 
+import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher"
+
 export function DashboardHeader({ sidebarCollapsed, onMenuClick }: DashboardHeaderProps) {
   return (
     <header 
@@ -54,6 +56,8 @@ export function DashboardHeader({ sidebarCollapsed, onMenuClick }: DashboardHead
           <Bell className="w-5 h-5" />
           <span className="absolute top-2 right-2 w-2 h-2 bg-cyan rounded-full ring-2 ring-background" />
         </Button>
+
+        <LanguageSwitcher />
 
         {/* Current Date/Time */}
         <div className="hidden md:flex items-center gap-3 pl-3 border-l border-border/50">

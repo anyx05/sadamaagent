@@ -21,31 +21,9 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Ship, Plus, Pencil, Trash2, Check, X } from "lucide-react"
+import { useBerths, useAddBerth, useUpdateBerth, useDeleteBerth, type Berth, type BerthStatus } from "@/lib/queries/berths"
 
-type BerthStatus = "available" | "occupied" | "maintenance"
-
-interface Berth {
-  id: number
-  name: string
-  length: number
-  draft: number
-  price: number
-  status: BerthStatus
-}
-
-// Initial berth data
-const initialBerths: Berth[] = [
-  { id: 1, name: "Marina Slip A-01", length: 12, draft: 2.5, price: 45, status: "available" },
-  { id: 2, name: "Marina Slip A-02", length: 15, draft: 3.0, price: 55, status: "occupied" },
-  { id: 3, name: "Yacht Berth B-01", length: 20, draft: 4.0, price: 85, status: "available" },
-  { id: 4, name: "Yacht Berth B-02", length: 25, draft: 4.5, price: 110, status: "maintenance" },
-  { id: 5, name: "Commercial Berth C-01", length: 40, draft: 6.0, price: 180, status: "occupied" },
-  { id: 6, name: "Commercial Berth C-02", length: 50, draft: 8.0, price: 250, status: "available" },
-  { id: 7, name: "Small Craft Slip D-01", length: 8, draft: 1.5, price: 25, status: "available" },
-  { id: 8, name: "Small Craft Slip D-02", length: 8, draft: 1.5, price: 25, status: "occupied" },
-]
-
-const statusConfig = {
+const statusConfig: Record<BerthStatus, { label: string, className: string }> = {
   available: {
     label: "Available",
     className: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
@@ -61,8 +39,12 @@ const statusConfig = {
 }
 
 export default function BerthsPage() {
-  const [berths, setBerths] = useState<Berth[]>(initialBerths)
-  const [editingId, setEditingId] = useState<number | null>(null)
+  const { data: berths = [], isLoading } = useBerths()
+  const { mutate: addBerthMutation, isPending: isAdding } = useAddBerth()
+  const { mutate: updateBerthMutation } = useUpdateBerth()
+  const { mutate: deleteBerthMutation } = useDeleteBerth()
+
+  const [editingId, setEditingId] = useState<string | null>(null)
   const [editForm, setEditForm] = useState<Berth | null>(null)
 
   const startEdit = (berth: Berth) => {
@@ -77,27 +59,23 @@ export default function BerthsPage() {
 
   const saveEdit = () => {
     if (!editForm) return
-    setBerths(berths.map(b => b.id === editForm.id ? editForm : b))
+    updateBerthMutation(editForm)
     setEditingId(null)
     setEditForm(null)
   }
 
-  const deleteBerth = (id: number) => {
-    setBerths(berths.filter(b => b.id !== id))
+  const deleteBerth = (id: string) => {
+    deleteBerthMutation(id)
   }
 
   const addBerth = () => {
-    const newId = Math.max(...berths.map(b => b.id)) + 1
-    const newBerth: Berth = {
-      id: newId,
-      name: `New Berth ${newId}`,
+    addBerthMutation({
+      name: `New Berth`,
       length: 10,
       draft: 2.0,
       price: 50,
       status: "available",
-    }
-    setBerths([...berths, newBerth])
-    startEdit(newBerth)
+    })
   }
 
   return (

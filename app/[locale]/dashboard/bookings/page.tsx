@@ -18,73 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-// Operator-focused booking data
-const bookings = [
-  {
-    id: "BK-2026-001",
-    customerName: "Erik Hansen",
-    vessel: "SY Nordic Wind",
-    arrival: "2026-04-08",
-    departure: "2026-04-12",
-    status: "confirmed",
-  },
-  {
-    id: "BK-2026-002",
-    customerName: "Maria Lindgren",
-    vessel: "MY Sea Breeze",
-    arrival: "2026-04-10",
-    departure: "2026-04-15",
-    status: "pending",
-  },
-  {
-    id: "BK-2026-003",
-    customerName: "Jonas Eriksson",
-    vessel: "SY Baltic Star",
-    arrival: "2026-04-12",
-    departure: "2026-04-14",
-    status: "confirmed",
-  },
-  {
-    id: "BK-2026-004",
-    customerName: "Anna Kowalski",
-    vessel: "MY Coastal Dream",
-    arrival: "2026-04-14",
-    departure: "2026-04-20",
-    status: "in-progress",
-  },
-  {
-    id: "BK-2026-005",
-    customerName: "Peter Mägi",
-    vessel: "SY Ocean Pearl",
-    arrival: "2026-04-16",
-    departure: "2026-04-18",
-    status: "pending",
-  },
-  {
-    id: "BK-2026-006",
-    customerName: "Lars Svensson",
-    vessel: "MY Northern Light",
-    arrival: "2026-04-18",
-    departure: "2026-04-25",
-    status: "confirmed",
-  },
-  {
-    id: "BK-2026-007",
-    customerName: "Katrin Tamm",
-    vessel: "SY Estonian Pride",
-    arrival: "2026-04-20",
-    departure: "2026-04-22",
-    status: "cancelled",
-  },
-  {
-    id: "BK-2026-008",
-    customerName: "Jaan Rebane",
-    vessel: "MY Wave Rider",
-    arrival: "2026-04-22",
-    departure: "2026-04-28",
-    status: "confirmed",
-  },
-]
+import { useBookings } from "@/lib/queries/bookings"
 
 const statusConfig = {
   confirmed: {
@@ -106,6 +40,7 @@ const statusConfig = {
 }
 
 function formatDate(dateStr: string) {
+  if (!dateStr) return "N/A"
   return new Date(dateStr).toLocaleDateString("en-EE", {
     month: "short",
     day: "numeric",
@@ -114,6 +49,8 @@ function formatDate(dateStr: string) {
 }
 
 export default function BookingsPage() {
+  const { data: bookings = [], isLoading } = useBookings()
+
   return (
     <div className="space-y-6">
       {/* Page Header */}
