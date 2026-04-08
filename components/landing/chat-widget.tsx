@@ -6,33 +6,25 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { MessageCircle, X, Send, Anchor, User, Sparkles } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useTranslations, useLocale } from "next-intl"
 
 interface ChatWidgetProps {
   isOpen: boolean
   onToggle: () => void
 }
 
-const dummyMessages = [
-  {
-    id: 1,
-    role: "assistant" as const,
-    content: "Welcome to SadamaAgent! I'm your marina assistant. How can I help you today?",
-  },
-  {
-    id: 2,
-    role: "user" as const,
-    content: "I need to reserve a berth for my sailboat.",
-  },
-  {
-    id: 3,
-    role: "assistant" as const,
-    content: "I'd be happy to help you with a berth reservation. Could you please provide the following details:\n\n• Vessel name and length\n• Expected arrival date\n• Number of nights\n• Any special requirements",
-  },
-]
-
 export function ChatWidget({ isOpen, onToggle }: ChatWidgetProps) {
+  const t = useTranslations("ChatWidget")
+  const locale = useLocale()
+  
   const [message, setMessage] = useState("")
-  const [messages, setMessages] = useState(dummyMessages)
+  const [messages, setMessages] = useState([
+    {
+      id: 1,
+      role: "assistant" as const,
+      content: t("welcome"),
+    }
+  ])
   const [isTyping, setIsTyping] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
@@ -44,32 +36,54 @@ export function ChatWidget({ isOpen, onToggle }: ChatWidgetProps) {
     scrollToBottom()
   }, [messages])
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!message.trim()) return
     
-    setMessages([
-      ...messages,
-      {
-        id: messages.length + 1,
-        role: "user",
-        content: message,
-      },
-    ])
+    // Add User Message Instantly
+    const userMsg = { id: Date.now(), role: "user" as const, content: message }
+    setMessages(prev => [...prev, userMsg])
     setMessage("")
     setIsTyping(true)
     
-    // Simulate assistant response
-    setTimeout(() => {
-      setIsTyping(false)
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: prev.length + 1,
-          role: "assistant",
-          content: "Thank you for your inquiry. I've found several available berths that match your requirements. Would you like me to show you the options?",
+    try {
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+      const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY
+      
+      const res = await fetch(`${supabaseUrl}/functions/v1/chat-handler`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${publishableKey}`
         },
+        body: JSON.stringify({
+          messages: [...messages, userMsg].map(m => ({ role: m.role, content: m.content })),
+          sessionId: "guest-session",
+          locale: locale
+        })
+      })
+
+      const data = await res.json()
+      
+      setMessages(prev => [
+        ...prev, 
+        { 
+          id: Date.now() + 1, 
+          role: 'assistant', 
+          content: data.text || 'Error obtaining response' 
+        }
       ])
-    }, 1500)
+    } catch (e) {
+      setMessages(prev => [
+        ...prev, 
+        { 
+          id: Date.now() + 1, 
+          role: 'assistant', 
+          content: 'Network connectivity error. Double check your API Keys.' 
+        }
+      ])
+    } finally {
+      setIsTyping(false)
+    }
   }
 
   return (
@@ -142,12 +156,12 @@ export function ChatWidget({ isOpen, onToggle }: ChatWidgetProps) {
                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold text-white flex items-center gap-2">
-                    Marina Assistant
+                    {t("title")}
                     <Sparkles className="w-3.5 h-3.5 text-cyan" />
                   </h3>
                   <div className="flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    <p className="text-xs text-white/50">Online - AI Powered</p>
+                    <p className="text-xs text-white/50">{t("status")}</p>
                   </div>
                 </div>
                 <button
@@ -244,7 +258,7 @@ export function ChatWidget({ isOpen, onToggle }: ChatWidgetProps) {
                   <Input
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Type your message..."
+                    placeholder={t("placeholder")}
                     className="flex-1 h-11 bg-white/[0.05] border-white/10 text-white placeholder:text-white/30 focus:border-cyan focus:ring-cyan/20"
                   />
                   <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
@@ -259,7 +273,7 @@ export function ChatWidget({ isOpen, onToggle }: ChatWidgetProps) {
                   </motion.div>
                 </form>
                 <p className="text-[10px] text-white/30 text-center mt-2">
-                  Powered by AI - Responses may vary
+                  {t("disclaimer")}
                 </p>
               </div>
             </div>

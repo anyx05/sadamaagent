@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Header } from "@/components/landing/header"
 import { HeroSection } from "@/components/landing/hero-section"
 import { BerthsGrid } from "@/components/landing/berths-grid"
+import { HowItWorks } from "@/components/landing/how-it-works"
 import { Footer } from "@/components/landing/footer"
 import { ChatWidget } from "@/components/landing/chat-widget"
 
@@ -14,6 +15,7 @@ export default function HomePage() {
     <main className="min-h-screen">
       <Header />
       <HeroSection onOpenChat={() => setIsChatOpen(true)} />
+      <HowItWorks />
       <BerthsGrid />
       <Footer />
       <ChatWidget 

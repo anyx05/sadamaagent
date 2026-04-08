@@ -4,7 +4,6 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { Analytics } from '@vercel/analytics/next'
 import { Providers } from '@/components/providers'
-import { ChatWidget } from '@/components/chat/ChatWidget'
 import '../globals.css'
 
 const inter = Inter({ 
@@ -43,12 +42,11 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale}>
-      <body className={`${inter.variable} font-sans antialiased`}>
+    <html lang={locale} suppressHydrationWarning>
+      <body className={`${inter.variable} font-sans antialiased`} suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>
           <Providers>
             {children}
-            <ChatWidget />
             {process.env.NODE_ENV === 'production' && <Analytics />}
           </Providers>
         </NextIntlClientProvider>

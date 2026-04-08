@@ -2,12 +2,15 @@
 
 import { Button } from "@/components/ui/button"
 import { MessageCircle, Ship, Sailboat, Anchor } from "lucide-react"
+import { useTranslations } from "next-intl"
 
 interface HeroSectionProps {
   onOpenChat: () => void
 }
 
 export function HeroSection({ onOpenChat }: HeroSectionProps) {
+  const t = useTranslations("Landing")
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-navy via-navy to-navy-dark">
       {/* Subtle Gradient Overlay */}
@@ -52,19 +55,17 @@ export function HeroSection({ onOpenChat }: HeroSectionProps) {
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.08] border border-white/10 backdrop-blur-sm mb-8">
           <Ship className="w-4 h-4 text-amber" />
           <span className="text-sm font-medium text-white/80">
-            Estonia&apos;s Premier Marina Platform
+            {t('badge')}
           </span>
         </div>
 
         <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-6 tracking-tight text-balance leading-[1.1]">
-          Find Your Perfect
-          <span className="block text-amber mt-2">Berth or Marina Slip</span>
+          {t('title')}
+          <span className="block text-amber mt-2">{t('titleHighlight')}</span>
         </h1>
 
         <p className="text-base sm:text-lg lg:text-xl text-white/60 max-w-2xl mx-auto mb-10 text-pretty leading-relaxed">
-          Whether you own a sailboat, yacht, or commercial vessel, discover and
-          book premium berths across Estonian harbours with real-time
-          availability and instant confirmation.
+          {t('description')}
         </p>
 
         {/* CTA Buttons - Stack on mobile */}
@@ -75,7 +76,7 @@ export function HeroSection({ onOpenChat }: HeroSectionProps) {
             className="w-full sm:w-auto bg-amber hover:bg-amber/90 text-navy font-semibold px-6 sm:px-8 h-12 sm:h-14 text-sm sm:text-base transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl hover:shadow-amber/30 focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-2 focus-visible:ring-offset-navy"
           >
             <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-            Chat with Marina Assistant
+            {t('chatBtn')}
           </Button>
           <Button
             variant="outline"
@@ -83,17 +84,17 @@ export function HeroSection({ onOpenChat }: HeroSectionProps) {
             asChild
             className="w-full sm:w-auto border-white/20 bg-white/[0.05] text-white hover:bg-white/10 hover:border-white/30 hover:text-white px-6 sm:px-8 h-12 sm:h-14 text-sm sm:text-base transition-all duration-300 ease-out hover:-translate-y-1 focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-navy"
           >
-            <a href="#berths">Browse Available Berths</a>
+            <a href="#berths">{t('browseBtn')}</a>
           </Button>
         </div>
 
         {/* Stats - Glassmorphism cards */}
         <div className="mt-16 sm:mt-20 lg:mt-24 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto">
           {[
-            { value: "24/7", label: "Support", icon: Anchor },
-            { value: "150+", label: "Berths", icon: Ship },
-            { value: "99.8%", label: "Uptime", icon: Sailboat },
-            { value: "5min", label: "Avg. Response", icon: MessageCircle },
+            { value: "24/7", label: t('statsSupport'), icon: Anchor },
+            { value: "150+", label: t('statsBerths'), icon: Ship },
+            { value: "99.8%", label: t('statsUptime'), icon: Sailboat },
+            { value: "5min", label: t('statsResponse'), icon: MessageCircle },
           ].map((stat) => (
             <div
               key={stat.label}

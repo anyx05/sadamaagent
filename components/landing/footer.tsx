@@ -1,27 +1,29 @@
 import Link from "next/link"
 import { Anchor, Sailboat, Ship, Waves } from "lucide-react"
-
-const footerLinks = {
-  services: [
-    { label: "Marina Berths", href: "#" },
-    { label: "Yacht Moorings", href: "#" },
-    { label: "Boat Storage", href: "#" },
-    { label: "Vessel Support", href: "#" },
-  ],
-  company: [
-    { label: "About Us", href: "#" },
-    { label: "Contact", href: "#" },
-    { label: "Careers", href: "#" },
-    { label: "Press", href: "#" },
-  ],
-  legal: [
-    { label: "Privacy Policy", href: "#" },
-    { label: "Terms of Service", href: "#" },
-    { label: "Cookie Policy", href: "#" },
-  ],
-}
+import { useTranslations } from "next-intl"
 
 export function Footer() {
+  const t = useTranslations("FooterNav")
+
+  const footerLinks = {
+    services: [
+      { label: t("marinaBerths"), href: "#berths" },
+      { label: t("yachtMoorings"), href: "#berths" },
+      { label: t("vesselSupport"), href: "#about" },
+    ],
+    company: [
+      { label: t("aboutUs"), href: "#about" },
+      { label: t("contact"), href: "mailto:hello@sadamaagent.ee" },
+      { label: t("careers"), href: "mailto:careers@sadamaagent.ee" },
+      { label: t("press"), href: "mailto:press@sadamaagent.ee" },
+    ],
+    legal: [
+      { label: t("privacy"), href: "#" },
+      { label: t("terms"), href: "#" },
+      { label: t("cookies"), href: "#" },
+    ],
+  }
+
   return (
     <footer className="relative bg-gradient-to-b from-navy to-navy-dark text-white overflow-hidden">
       {/* Subtle wave decoration */}
@@ -43,8 +45,7 @@ export function Footer() {
               </span>
             </Link>
             <p className="text-white/50 text-sm leading-relaxed max-w-xs">
-              Estonia&apos;s premier marina and harbour booking platform for
-              boat owners, yachts, and commercial vessels.
+              {t("desc")}
             </p>
             {/* Vessel type icons */}
             <div className="flex items-center gap-3 mt-5">
@@ -63,7 +64,7 @@ export function Footer() {
           {/* Services */}
           <div>
             <h3 className="font-semibold text-sm mb-4 text-amber tracking-wide uppercase">
-              Services
+              {t("servicesTitle")}
             </h3>
             <ul className="space-y-2.5">
               {footerLinks.services.map((link) => (
@@ -82,7 +83,7 @@ export function Footer() {
           {/* Company */}
           <div>
             <h3 className="font-semibold text-sm mb-4 text-amber tracking-wide uppercase">
-              Company
+              {t("companyTitle")}
             </h3>
             <ul className="space-y-2.5">
               {footerLinks.company.map((link) => (
@@ -101,7 +102,7 @@ export function Footer() {
           {/* Legal */}
           <div>
             <h3 className="font-semibold text-sm mb-4 text-amber tracking-wide uppercase">
-              Legal
+              {t("legalTitle")}
             </h3>
             <ul className="space-y-2.5">
               {footerLinks.legal.map((link) => (
@@ -122,13 +123,12 @@ export function Footer() {
         <div className="mt-12 sm:mt-16 pt-6 sm:pt-8 border-t border-white/10">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-xs sm:text-sm text-white/40">
-              &copy; {new Date().getFullYear()} SadamaAgent. All rights
-              reserved.
+              &copy; {new Date().getFullYear()} SadamaAgent. {t("rights")}
             </p>
             <div className="flex items-center gap-2">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs text-white/50">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                Proudly serving Estonian harbours
+                {t("serving")}
               </span>
             </div>
           </div>

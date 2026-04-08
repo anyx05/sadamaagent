@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Anchor, Ship, Ruler, Waves, Clock, Euro } from "lucide-react"
 import { useBerths } from "@/lib/queries/berths"
+import { useTranslations } from "next-intl"
 
 const statusColors = {
   available:
@@ -13,14 +14,15 @@ const statusColors = {
   maintenance: "bg-amber/10 text-amber border-amber/20 hover:bg-amber/15",
 }
 
-const statusLabels = {
-  available: "Available",
-  occupied: "Occupied",
-  maintenance: "Maintenance",
-}
-
 export function BerthsGrid() {
   const { data: berths, isLoading, error } = useBerths()
+  const t = useTranslations("Berths")
+
+  const statusLabels = {
+    available: t("statusAvailable"),
+    occupied: t("statusOccupied"),
+    maintenance: t("statusMaintenance"),
+  }
 
   return (
     <section id="berths" className="py-16 sm:py-20 lg:py-24 bg-muted/30">
@@ -31,12 +33,10 @@ export function BerthsGrid() {
             <Anchor className="w-5 h-5 text-navy" />
           </div>
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground mb-3 tracking-tight">
-            Available Berths &amp; Marina Slips
+            {t("title")}
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto text-pretty text-sm sm:text-base leading-relaxed">
-            From cozy marina slips for sailboats to large-capacity berths for
-            yachts and commercial vessels. Modern amenities, 24/7 support, and
-            real-time availability.
+            {t("subtitle")}
           </p>
         </div>
 
@@ -75,7 +75,7 @@ export function BerthsGrid() {
                 <Ship className="w-6 h-6 text-rose-500" />
               </div>
               <p className="text-rose-600 font-medium">
-                Error fetching berths: {error.message}
+                {t("error")} {error.message}
               </p>
             </div>
           ) : berths && berths.length > 0 ? (
@@ -118,7 +118,7 @@ export function BerthsGrid() {
                       {berth.price_per_night}
                     </span>
                     <span className="text-xs sm:text-sm text-muted-foreground font-normal">
-                      / night
+                      {t("night")}
                     </span>
                   </div>
 
@@ -153,7 +153,7 @@ export function BerthsGrid() {
                             {berth.max_draft}m
                           </span>
                           <span className="text-muted-foreground ml-1">
-                            draft
+                            {t("draft")}
                           </span>
                         </span>
                       </div>
@@ -164,7 +164,7 @@ export function BerthsGrid() {
                             {berth.max_vessel_length}m
                           </span>
                           <span className="text-muted-foreground ml-1">
-                            length
+                            {t("length")}
                           </span>
                         </span>
                       </div>
@@ -179,7 +179,7 @@ export function BerthsGrid() {
                 <Anchor className="w-6 h-6 text-muted-foreground" />
               </div>
               <p className="text-muted-foreground">
-                No berths found for this port.
+                {t("empty")}
               </p>
             </div>
           )}
@@ -193,27 +193,27 @@ export function BerthsGrid() {
                 <Clock className="w-4 h-4 text-amber" />
               </div>
               <span className="text-white/80 text-sm sm:text-base">
-                Real-time updates every{" "}
-                <span className="text-amber font-semibold">5 minutes</span>
+                {t("updates")}{" "}
+                <span className="text-amber font-semibold">{t("minutes")}</span>
               </span>
             </div>
             <div className="flex items-center gap-4 sm:gap-6">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-emerald-400 shadow-sm shadow-emerald-400/50" />
                 <span className="text-xs sm:text-sm text-white/70">
-                  Available
+                  {t("statusAvailable")}
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-rose-400 shadow-sm shadow-rose-400/50" />
                 <span className="text-xs sm:text-sm text-white/70">
-                  Occupied
+                  {t("statusOccupied")}
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-amber shadow-sm shadow-amber/50" />
                 <span className="text-xs sm:text-sm text-white/70">
-                  Maintenance
+                  {t("statusMaintenance")}
                 </span>
               </div>
             </div>

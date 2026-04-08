@@ -10,6 +10,8 @@ import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { createClient } from "@/lib/supabase/client"
 import { toast } from "sonner"
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher"
+import { useTranslations } from "next-intl"
+
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -17,6 +19,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("")
   const router = useRouter()
   const supabase = createClient()
+  const t = useTranslations("Auth")
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -31,7 +34,7 @@ export default function LoginPage() {
       toast.error(error.message)
       setIsLoading(false)
     } else {
-      toast.success("Successfully logged in.")
+      toast.success(t("success"))
       router.push("/dashboard")
     }
   }
@@ -53,18 +56,14 @@ export default function LoginPage() {
       />
 
       <div className="w-full max-w-md relative z-10">
-        <div className="flex items-center justify-between mb-8">
-          {/* Back Link */}
-          <Link 
-            href="/"
-            className="inline-flex items-center gap-2 text-sm text-white/50 hover:text-white transition-colors duration-300 group"
-          >
-            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-300" />
-            Back to Home
-          </Link>
-
-          <LanguageSwitcher />
-        </div>
+        {/* Back Link */}
+        <Link 
+          href="/"
+          className="inline-flex items-center gap-2 text-sm text-white/50 hover:text-white transition-colors duration-300 mb-8 group"
+        >
+          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform duration-300" />
+          {t("back")}
+        </Link>
 
         {/* Glassmorphism Card */}
         <div className="relative">
@@ -84,10 +83,10 @@ export default function LoginPage() {
                 </div>
               </div>
               <h1 className="text-2xl font-bold text-white tracking-tight">
-                Welcome Back
+                {t("title")}
               </h1>
               <p className="text-white/50 text-sm mt-2">
-                Sign in to access your marina dashboard
+                {t("subtitle")}
               </p>
             </div>
 
@@ -97,14 +96,14 @@ export default function LoginPage() {
                 <FieldGroup>
                   <Field>
                     <FieldLabel htmlFor="email" className="text-white/70 text-sm font-medium">
-                      Email Address
+                      {t("emailLabel")}
                     </FieldLabel>
                     <Input
                       id="email"
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="captain@maritime.ee"
+                      placeholder={t("emailPlaceholder")}
                       className="h-12 bg-white/[0.05] border-white/10 text-white placeholder:text-white/30 focus:border-cyan focus:ring-cyan/20 transition-all duration-300"
                       autoComplete="email"
                       required
@@ -113,7 +112,7 @@ export default function LoginPage() {
 
                   <Field>
                     <FieldLabel htmlFor="password" className="text-white/70 text-sm font-medium">
-                      Password
+                      {t("passwordLabel")}
                     </FieldLabel>
                     <div className="relative">
                       <Input
@@ -121,7 +120,7 @@ export default function LoginPage() {
                         type={showPassword ? "text" : "password"}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        placeholder="Enter your password"
+                        placeholder={t("passwordPlaceholder")}
                         className="h-12 bg-white/[0.05] border-white/10 text-white placeholder:text-white/30 pr-12 focus:border-cyan focus:ring-cyan/20 transition-all duration-300"
                         autoComplete="current-password"
                         required
@@ -147,13 +146,13 @@ export default function LoginPage() {
                         type="checkbox" 
                         className="w-4 h-4 rounded border-white/20 bg-white/5 text-cyan focus:ring-cyan/30"
                       />
-                      <span className="text-white/50 group-hover:text-white/70 transition-colors">Remember me</span>
+                      <span className="text-white/50 group-hover:text-white/70 transition-colors">{t("remember")}</span>
                     </label>
                     <Link 
                       href="#" 
                       className="text-cyan hover:text-cyan-light transition-colors duration-300 font-medium"
                     >
-                      Forgot password?
+                      {t("forgot")}
                     </Link>
                   </div>
 
@@ -168,10 +167,10 @@ export default function LoginPage() {
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                         </svg>
-                        Authenticating...
+                        {t("authenticating")}
                       </span>
                     ) : (
-                      "Sign In"
+                      t("signInBtn")
                     )}
                   </Button>
                 </FieldGroup>
@@ -184,7 +183,7 @@ export default function LoginPage() {
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
                   <span className="bg-transparent px-3 text-white/30 backdrop-blur-sm">
-                    Or continue with
+                    {t("or")}
                   </span>
                 </div>
               </div>
@@ -228,12 +227,12 @@ export default function LoginPage() {
 
               {/* Sign Up Link */}
               <p className="text-center text-sm text-white/40 mt-8">
-                Don&apos;t have an account?{" "}
+                {t("noAccount")}{" "}
                 <Link 
                   href="/signup" 
                   className="text-cyan hover:text-cyan-light transition-colors duration-300 font-medium"
                 >
-                  Create one
+                  {t("createAccount")}
                 </Link>
               </p>
             </div>
@@ -244,7 +243,7 @@ export default function LoginPage() {
         <div className="flex items-center justify-center gap-2 mt-6">
           <Terminal className="w-3.5 h-3.5 text-cyan/50" />
           <p className="text-xs text-white/30">
-            Enterprise-grade security. End-to-end encryption.
+            {t("securityNotice")}
           </p>
         </div>
       </div>

@@ -15,6 +15,7 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { useTranslations } from "next-intl"
 
 interface SidebarProps {
   collapsed: boolean
@@ -23,28 +24,6 @@ interface SidebarProps {
   onMobileClose?: () => void
 }
 
-const navItems = [
-  {
-    label: "Overview",
-    href: "/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    label: "Berth Manager",
-    href: "/dashboard/berths",
-    icon: Ship,
-  },
-  {
-    label: "Bookings",
-    href: "/dashboard/bookings",
-    icon: Calendar,
-  },
-  {
-    label: "Agent Settings",
-    href: "/dashboard/settings",
-    icon: Settings,
-  },
-]
 
 export function DashboardSidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: SidebarProps) {
   const pathname = usePathname()
@@ -114,6 +93,31 @@ function SidebarContent({
   showCollapseButton?: boolean
   onNavigate?: () => void
 }) {
+  const t = useTranslations("Dashboard")
+
+  const navItems = [
+    {
+      label: t("overview"),
+      href: "/dashboard",
+      icon: LayoutDashboard,
+    },
+    {
+      label: t("berths"),
+      href: "/dashboard/berths",
+      icon: Ship,
+    },
+    {
+      label: t("bookings"),
+      href: "/dashboard/bookings",
+      icon: Calendar,
+    },
+    {
+      label: t("settings"),
+      href: "/dashboard/settings",
+      icon: Settings,
+    },
+  ]
+
   return (
     <>
       {/* Header */}
@@ -140,7 +144,7 @@ function SidebarContent({
           "text-[10px] uppercase tracking-wider text-white/30 font-medium mb-3 px-3 transition-opacity",
           collapsed && "opacity-0"
         )}>
-          Navigation
+          {t("navigation")}
         </p>
         <ul className="space-y-1">
           {navItems.map((item) => {
@@ -211,7 +215,7 @@ function SidebarContent({
             "whitespace-nowrap transition-opacity duration-300",
             collapsed ? "opacity-0 w-0" : "opacity-100"
           )}>
-            Sign Out
+            {t("signOut")}
           </span>
         </Link>
 
@@ -234,7 +238,7 @@ function SidebarContent({
               "ml-2 transition-opacity duration-300",
               collapsed ? "opacity-0 w-0" : "opacity-100"
             )}>
-              Collapse
+              {t("collapse")}
             </span>
           </Button>
         )}

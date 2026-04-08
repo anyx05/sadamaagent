@@ -11,8 +11,11 @@ interface DashboardHeaderProps {
 }
 
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher"
-
+import { useTranslations, useLocale } from "next-intl"
 export function DashboardHeader({ sidebarCollapsed, onMenuClick }: DashboardHeaderProps) {
+  const t = useTranslations("Dashboard")
+  const locale = useLocale()
+  
   return (
     <header 
       className={cn(
@@ -36,7 +39,7 @@ export function DashboardHeader({ sidebarCollapsed, onMenuClick }: DashboardHead
         <div className="relative hidden sm:block">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
-            placeholder="Search berths, bookings..."
+            placeholder={t("search")}
             className="pl-10 w-48 md:w-64 h-9 bg-muted/50 border-border/50 focus:bg-muted focus:border-cyan/30 transition-all"
           />
           <div className="absolute right-3 top-1/2 -translate-y-1/2 hidden md:flex items-center gap-1 text-muted-foreground/50">
@@ -63,20 +66,20 @@ export function DashboardHeader({ sidebarCollapsed, onMenuClick }: DashboardHead
         <div className="hidden md:flex items-center gap-3 pl-3 border-l border-border/50">
           <div className="text-right">
             <p className="text-sm font-medium text-foreground">
-              {new Date().toLocaleDateString("en-EE", { 
+              {new Date().toLocaleDateString(locale === "et" ? "et-EE" : "en-EE", { 
                 weekday: "short", 
                 month: "short", 
                 day: "numeric" 
               })}
             </p>
             <p className="text-xs text-muted-foreground">
-              Tallinn Marina Authority
+              {t("authority")}
             </p>
           </div>
           {/* Status Indicator */}
           <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-xs font-medium text-emerald-600">Online</span>
+            <span className="text-xs font-medium text-emerald-600">{t("online")}</span>
           </div>
         </div>
       </div>

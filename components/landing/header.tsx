@@ -4,6 +4,8 @@ import { useState } from "react"
 import Link from "next/link"
 import { Anchor, Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher"
+import { useTranslations } from "next-intl"
 import {
   Sheet,
   SheetContent,
@@ -13,14 +15,15 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 
-const navLinks = [
-  { label: "Berths", href: "#berths" },
-  { label: "Services", href: "#services" },
-  { label: "About", href: "#about" },
-]
-
 export function Header() {
   const [isOpen, setIsOpen] = useState(false)
+  const t = useTranslations("Header")
+
+  const navLinks = [
+    { label: t("berths"), href: "#berths" },
+    { label: t("services"), href: "#services" },
+    { label: t("about"), href: "#about" },
+  ]
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/70 backdrop-blur-xl border-b border-white/10 shadow-sm">
@@ -51,18 +54,19 @@ export function Header() {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-2">
+            <LanguageSwitcher />
             <Button
               variant="ghost"
               asChild
               className="text-muted-foreground hover:text-foreground hover:bg-navy/5 transition-all duration-300 ease-out"
             >
-              <Link href="/login">Sign In</Link>
+              <Link href="/login">{t("signIn")}</Link>
             </Button>
             <Button
               asChild
               className="bg-navy hover:bg-navy-light text-white shadow-md shadow-navy/20 transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-lg hover:shadow-navy/30 focus-visible:ring-2 focus-visible:ring-amber/50 focus-visible:ring-offset-2"
             >
-              <Link href="/dashboard">Dashboard</Link>
+              <Link href="/dashboard">{t("dashboard")}</Link>
             </Button>
           </div>
 
@@ -114,14 +118,14 @@ export function Header() {
                   className="w-full justify-center border-border/50 hover:bg-navy/5 transition-all duration-300 ease-out"
                   onClick={() => setIsOpen(false)}
                 >
-                  <Link href="/login">Sign In</Link>
+                  <Link href="/login">{t("signIn")}</Link>
                 </Button>
                 <Button
                   asChild
                   className="w-full justify-center bg-navy hover:bg-navy-light text-white shadow-md shadow-navy/20 transition-all duration-300 ease-out"
                   onClick={() => setIsOpen(false)}
                 >
-                  <Link href="/dashboard">Dashboard</Link>
+                  <Link href="/dashboard">{t("dashboard")}</Link>
                 </Button>
               </div>
             </SheetContent>

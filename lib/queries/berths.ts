@@ -26,9 +26,10 @@ export function useCurrentPortId() {
         .from('ports')
         .select('id')
         .eq('owner_id', user.id)
-        .single();
+        .maybeSingle();
         
-      if (error) throw new Error("Port not found for user: " + error.message);
+      if (error) throw new Error("Database query failed: " + error.message);
+      if (!data) return null; // No port created for this user yet
       return data.id as string;
     }
   });

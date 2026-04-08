@@ -17,5 +17,103 @@
   },
   "footer": {
     "built": "Ehitatud AI Web Session 2026 raames"
+  },
+  "Landing": {
+    "badge": "Eesti Esimene Sadamaplatvorm",
+    "title": "Leia Oma Ideaalne",
+    "titleHighlight": "Kaikoht Või Slip",
+    "description": "Olenemata sellest, kas omate purjekat, jahti või kaubalaeva, avastage ja broneerige preemium kaikohti üle Eesti sadamate reaalajas saadavuse ja kohese kinnitusega.",
+    "chatBtn": "Räägi Sadamaassistendiga",
+    "browseBtn": "Sirvi Vabu Kaikohti",
+    "statsSupport": "Tugi",
+    "statsBerths": "Kaikohti",
+    "statsUptime": "Kättesaadavus",
+    "statsResponse": "Keskm. Vastus"
+  },
+  "Header": {
+    "berths": "Kaikohad",
+    "services": "Teenused",
+    "about": "Meist",
+    "signIn": "Logi Sisse",
+    "dashboard": "Töölaud"
+  },
+  "HowItWorks": {
+    "title": "Kuidas See Töötab",
+    "subtitle": "Oleme eemaldanud traditsioonilised broneerimiskalendrid. SadamaAgent on autonoomne AI süsteem, mis on ühendatud otse andmebaasiga.",
+    "step1": "1. Jäta Vormid Vahele",
+    "step1Desc": "Ära raiska aega lõputute kalendrite ja vormide peale. Sinu aeg on väärtuslik.",
+    "step2": "2. Räägi Agendiga",
+    "step2Desc": "Ava sadamaassistendi vestlus. Ütle oma laeva pikkus, süvis ja soovitav saabumisaeg.",
+    "step3": "3. Otsene Broneerimine",
+    "step3Desc": "Anna oma kontaktid. Agent lukustab broneeringu ning saadab emalili kinnituse."
+  },
+  "Berths": {
+    "title": "Saadaolevad Kaikohad",
+    "subtitle": "Mugavatest purjekate kaikohtadest kuni suurte jahtide kohtadeni. Reaalajas saadavus.",
+    "night": "/ öö",
+    "draft": "süvis",
+    "length": "pikkus",
+    "empty": "Selles sadamas ei leitud kaikohti.",
+    "updates": "Reaalajas uuendused iga",
+    "minutes": "5 minuti tagant",
+    "statusAvailable": "Vaba",
+    "statusOccupied": "Hõivatud",
+    "statusMaintenance": "Hooldus",
+    "error": "Viga kaikohtade laadimisel:"
+  },
+  "FooterNav": {
+    "desc": "Eesti esimene sadamaplatvorm paadiomanikele, jahtidele ja kaubalaevadele.",
+    "servicesTitle": "Teenused",
+    "marinaBerths": "Kaikohad",
+    "yachtMoorings": "Jahtide Sildumine",
+    "vesselSupport": "Laevade Tugi",
+    "companyTitle": "Ettevõte",
+    "aboutUs": "Meist",
+    "contact": "Kontakt",
+    "careers": "Karjäär",
+    "press": "Press",
+    "legalTitle": "Õigus",
+    "privacy": "Privaatsuspoliitika",
+    "terms": "Kasutustingimused",
+    "cookies": "Küpsiste Poliitika",
+    "rights": "Kõik õigused reserveeritud.",
+    "serving": "Uhkel tasemel teenindame Eesti sadamaid"
+  },
+  "ChatWidget": {
+    "title": "Sadamaassistent",
+    "status": "Aktiivne - AI Puhverdatud",
+    "placeholder": "Kirjuta oma sõnum...",
+    "disclaimer": "Toetab AI - Vastused võivad erineda",
+    "welcome": "Tere tulemast SadamaAgenti! Olen sinu AI sadamaassistent, kes on otseühenduses reaalajas andmebaasiga. Kuidas saan täna kaikohta broneerida aidata?"
+  },
+  "Auth": {
+    "back": "Tagasi Avalehele",
+    "title": "Tere Tulemast Tagasi",
+    "subtitle": "Logi sisse, et avada oma sadama töölaud",
+    "emailLabel": "E-posti Aadress",
+    "emailPlaceholder": "kapten@maritime.ee",
+    "passwordLabel": "Salasõna",
+    "passwordPlaceholder": "Sisesta oma salasõna",
+    "remember": "Jäta mind meelde",
+    "forgot": "Unustasid salasõna?",
+    "signInBtn": "Logi Sisse",
+    "authenticating": "Autenditakse...",
+    "or": "Või jätka kasutades",
+    "noAccount": "Pole veel kontot?",
+    "createAccount": "Loo see",
+    "securityNotice": "Ettevõtte tasemel turvalisus. Otsast-lõpuni krüpteeritud.",
+    "success": "Edukalt sisse logitud."
+  },
+  "Dashboard": {
+    "navigation": "Navigeerimine",
+    "overview": "Ülevaade",
+    "berths": "Kaikoha Haldur",
+    "bookings": "Broneeringud",
+    "settings": "Agendi Seaded",
+    "signOut": "Logi Välja",
+    "collapse": "Peida",
+    "search": "Otsi kaikohti, broneeringuid...",
+    "authority": "Tallinna Sadamaamet",
+    "online": "Aktiivne"
   }
 }
