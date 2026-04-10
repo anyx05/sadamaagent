@@ -1,8 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { Link, useRouter } from "@/i18n/routing"
 import { Anchor, ArrowLeft, Eye, EyeOff, Terminal } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"

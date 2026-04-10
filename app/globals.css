@@ -51,6 +51,37 @@
   --sidebar-ring: var(--amber);
 }
 
+/* Dark Mode Maritime Theme */
+.dark {
+  --background: #0c1929;
+  --foreground: #e2e8f0;
+  --card: #111d2e;
+  --card-foreground: #e2e8f0;
+  --popover: #111d2e;
+  --popover-foreground: #e2e8f0;
+  --primary: var(--cyan);
+  --primary-foreground: var(--navy);
+  --secondary: #1a2a3e;
+  --secondary-foreground: #e2e8f0;
+  --muted: #152238;
+  --muted-foreground: #8899aa;
+  --accent: var(--amber);
+  --accent-foreground: var(--navy);
+  --destructive: #ef4444;
+  --destructive-foreground: var(--white);
+  --border: #1e3048;
+  --input: #1e3048;
+  --ring: var(--cyan);
+  --sidebar: var(--navy);
+  --sidebar-foreground: var(--white);
+  --sidebar-primary: var(--amber);
+  --sidebar-primary-foreground: var(--navy);
+  --sidebar-accent: var(--navy-light);
+  --sidebar-accent-foreground: var(--white);
+  --sidebar-border: var(--navy-light);
+  --sidebar-ring: var(--amber);
+}
+
 @theme inline {
   --font-sans: var(--font-inter), 'Inter', system-ui, sans-serif;
   --font-mono: 'Geist Mono', 'Geist Mono Fallback';

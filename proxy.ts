@@ -6,9 +6,9 @@ import { routing } from "./i18n/routing";
 // 1. Create the internationalization router
 const handleI18nRouting = createIntlMiddleware(routing);
 
-export async function proxy(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
   // 2. Process locale routing first (resolves /en/, /et/ paths based on headers)
-  let response = handleI18nRouting(request);
+  const response = handleI18nRouting(request);
 
   // 3. Setup Supabase to attach to the response the i18n router just generated
   const supabase = createServerClient(
@@ -50,11 +50,11 @@ export const config = {
   matcher: [
     /*
      * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * Feel free to modify this pattern to include more paths.
+     * - api (API routes)
+     * - _next (Next.js internals)
+     * - _vercel (Vercel internals)
+     * - static files (dots in name)
      */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!api|_next|_vercel|.*\\..*).*)",
   ],
 };

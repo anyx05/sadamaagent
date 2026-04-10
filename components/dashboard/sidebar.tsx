@@ -1,7 +1,8 @@
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { 
   Anchor, 
   Ship, 
@@ -11,11 +12,14 @@ import {
   ChevronLeft,
   LayoutDashboard,
   User,
-  X
+  X,
+  Loader2
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { useTranslations } from "next-intl"
+import { createClient } from "@/lib/supabase/client"
+import { toast } from "sonner"
 
 interface SidebarProps {
   collapsed: boolean
@@ -202,22 +206,11 @@ function SidebarContent({
         </div>
 
         {/* Logout */}
-        <Link
-          href="/login"
-          onClick={onNavigate}
-          className={cn(
-            "flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/50 hover:bg-white/5 hover:text-white transition-all duration-300",
-            collapsed && "justify-center"
-          )}
-        >
-          <LogOut className="w-5 h-5 shrink-0" />
-          <span className={cn(
-            "whitespace-nowrap transition-opacity duration-300",
-            collapsed ? "opacity-0 w-0" : "opacity-100"
-          )}>
-            {t("signOut")}
-          </span>
-        </Link>
+        <SignOutButton 
+          collapsed={collapsed} 
+          onNavigate={onNavigate}
+          label={t("signOut")}
+        />
 
         {/* Collapse Toggle - Desktop Only */}
         {showCollapseButton && (
@@ -244,5 +237,48 @@ function SidebarContent({
         )}
       </div>
     </>
+  )
+}
+
+function SignOutButton({ collapsed, onNavigate, label }: { collapsed: boolean; onNavigate?: () => void; label: string }) {
+  const [isSigningOut, setIsSigningOut] = useState(false)
+  const router = useRouter()
+
+  const handleSignOut = async () => {
+    setIsSigningOut(true)
+    try {
+      const supabase = createClient()
+      await supabase.auth.signOut()
+      onNavigate?.()
+      toast.success("Signed out successfully")
+      router.push("/login")
+    } catch (error) {
+      toast.error("Failed to sign out")
+      setIsSigningOut(false)
+    }
+  }
+
+  return (
+    <button
+      onClick={handleSignOut}
+      disabled={isSigningOut}
+      className={cn(
+        "flex items-center gap-3 px-3 py-2.5 rounded-xl text-white/50 hover:bg-white/5 hover:text-white transition-all duration-300 w-full",
+        collapsed && "justify-center",
+        isSigningOut && "opacity-50 cursor-not-allowed"
+      )}
+    >
+      {isSigningOut ? (
+        <Loader2 className="w-5 h-5 shrink-0 animate-spin" />
+      ) : (
+        <LogOut className="w-5 h-5 shrink-0" />
+      )}
+      <span className={cn(
+        "whitespace-nowrap transition-opacity duration-300",
+        collapsed ? "opacity-0 w-0" : "opacity-100"
+      )}>
+        {isSigningOut ? "Signing out..." : label}
+      </span>
+    </button>
   )
 }

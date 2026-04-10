@@ -22,27 +22,29 @@ import {
 } from "@/components/ui/select"
 import { Ship, Plus, Pencil, Trash2, Check, X } from "lucide-react"
 import { useBerths, useAddBerth, useUpdateBerth, useDeleteBerth, type Berth, type BerthStatus } from "@/lib/queries/berths"
-
-const statusConfig: Record<BerthStatus, { label: string, className: string }> = {
-  available: {
-    label: "Available",
-    className: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
-  },
-  occupied: {
-    label: "Occupied",
-    className: "bg-rose-500/10 text-rose-600 border-rose-500/20",
-  },
-  maintenance: {
-    label: "Maintenance",
-    className: "bg-amber/10 text-amber border-amber/20",
-  },
-}
+import { useTranslations } from "next-intl"
 
 export default function BerthsPage() {
   const { data: berths = [], isLoading } = useBerths()
   const { mutate: addBerthMutation, isPending: isAdding } = useAddBerth()
   const { mutate: updateBerthMutation } = useUpdateBerth()
   const { mutate: deleteBerthMutation } = useDeleteBerth()
+  const t = useTranslations("BerthManager")
+
+  const statusConfig: Record<BerthStatus, { label: string, className: string }> = {
+    available: {
+      label: t("available"),
+      className: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
+    },
+    occupied: {
+      label: t("occupied"),
+      className: "bg-rose-500/10 text-rose-600 border-rose-500/20",
+    },
+    maintenance: {
+      label: t("maintenance"),
+      className: "bg-amber/10 text-amber border-amber/20",
+    },
+  }
 
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editForm, setEditForm] = useState<Berth | null>(null)
@@ -84,10 +86,10 @@ export default function BerthsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground">
-            Berth Manager
+            {t("title")}
           </h1>
           <p className="text-muted-foreground mt-1">
-            Full CRUD management for marina berths
+            {t("subtitle")}
           </p>
         </div>
         <Button 
@@ -95,7 +97,7 @@ export default function BerthsPage() {
           className="bg-navy hover:bg-navy-light text-white shadow-md shadow-navy/20 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-navy/30"
         >
           <Plus className="w-4 h-4 mr-2" />
-          Add New Berth
+          {t("addNew")}
         </Button>
       </div>
 
@@ -107,9 +109,9 @@ export default function BerthsPage() {
               <Ship className="w-5 h-5" />
             </div>
             <div>
-              <CardTitle className="text-lg">All Berths</CardTitle>
+              <CardTitle className="text-lg">{t("allBerths")}</CardTitle>
               <CardDescription>
-                {berths.length} berths across all facilities. Click edit to modify inline.
+                {berths.length} {t("description")}
               </CardDescription>
             </div>
           </div>
@@ -120,12 +122,12 @@ export default function BerthsPage() {
             <Table>
               <TableHeader>
                 <TableRow className="hover:bg-transparent border-border/50">
-                  <TableHead className="pl-6 min-w-[180px]">Name</TableHead>
-                  <TableHead className="text-right min-w-[100px]">Length (m)</TableHead>
-                  <TableHead className="text-right min-w-[100px]">Draft (m)</TableHead>
-                  <TableHead className="text-right min-w-[120px]">Price/Night</TableHead>
-                  <TableHead className="min-w-[130px]">Status</TableHead>
-                  <TableHead className="pr-6 text-right min-w-[120px]">Actions</TableHead>
+                  <TableHead className="pl-6 min-w-[180px]">{t("name")}</TableHead>
+                  <TableHead className="text-right min-w-[100px]">{t("length")}</TableHead>
+                  <TableHead className="text-right min-w-[100px]">{t("draft")}</TableHead>
+                  <TableHead className="text-right min-w-[120px]">{t("priceNight")}</TableHead>
+                  <TableHead className="min-w-[130px]">{t("status")}</TableHead>
+                  <TableHead className="pr-6 text-right min-w-[120px]">{t("actions")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -196,9 +198,9 @@ export default function BerthsPage() {
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="available">Available</SelectItem>
-                              <SelectItem value="occupied">Occupied</SelectItem>
-                              <SelectItem value="maintenance">Maintenance</SelectItem>
+                            <SelectItem value="available">{t("available")}</SelectItem>
+                              <SelectItem value="occupied">{t("occupied")}</SelectItem>
+                              <SelectItem value="maintenance">{t("maintenance")}</SelectItem>
                             </SelectContent>
                           </Select>
                         ) : (
@@ -289,15 +291,15 @@ export default function BerthsPage() {
                   </div>
                   <div className="grid grid-cols-3 gap-4 text-sm">
                     <div>
-                      <p className="text-muted-foreground text-xs">Length</p>
+                      <p className="text-muted-foreground text-xs">{t("lengthLabel")}</p>
                       <p className="font-medium tabular-nums">{berth.length}m</p>
                     </div>
                     <div>
-                      <p className="text-muted-foreground text-xs">Draft</p>
+                      <p className="text-muted-foreground text-xs">{t("draftLabel")}</p>
                       <p className="font-medium tabular-nums">{berth.draft}m</p>
                     </div>
                     <div>
-                      <p className="text-muted-foreground text-xs">Price</p>
+                      <p className="text-muted-foreground text-xs">{t("priceLabel")}</p>
                       <p className="font-medium tabular-nums">&euro;{berth.price}</p>
                     </div>
                   </div>
@@ -309,20 +311,20 @@ export default function BerthsPage() {
           {/* Table Footer */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 sm:px-6 py-4 border-t border-border/30 bg-muted/20">
             <p className="text-sm text-muted-foreground">
-              <span className="font-medium text-foreground">{berths.length}</span> berths total
+              <span className="font-medium text-foreground">{berths.length}</span> {t("berthsTotal")}
             </p>
             <div className="flex items-center gap-3 sm:gap-4">
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                 <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                {berths.filter((b) => b.status === "available").length} Available
+                {berths.filter((b) => b.status === "available").length} {t("available")}
               </div>
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                 <span className="w-2 h-2 rounded-full bg-rose-500" />
-                {berths.filter((b) => b.status === "occupied").length} Occupied
+                {berths.filter((b) => b.status === "occupied").length} {t("occupied")}
               </div>
               <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                 <span className="w-2 h-2 rounded-full bg-amber" />
-                {berths.filter((b) => b.status === "maintenance").length} Maintenance
+                {berths.filter((b) => b.status === "maintenance").length} {t("maintenance")}
               </div>
             </div>
           </div>

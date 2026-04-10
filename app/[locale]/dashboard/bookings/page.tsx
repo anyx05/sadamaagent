@@ -1,3 +1,5 @@
+"use client"
+
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -19,25 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 
 import { useBookings } from "@/lib/queries/bookings"
-
-const statusConfig = {
-  confirmed: {
-    label: "Confirmed",
-    className: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
-  },
-  pending: {
-    label: "Pending",
-    className: "bg-amber/10 text-amber border-amber/20",
-  },
-  "in-progress": {
-    label: "In Progress",
-    className: "bg-cyan/10 text-cyan border-cyan/20",
-  },
-  cancelled: {
-    label: "Cancelled",
-    className: "bg-rose-500/10 text-rose-600 border-rose-500/20",
-  },
-}
+import { useTranslations } from "next-intl"
 
 function formatDate(dateStr: string) {
   if (!dateStr) return "N/A"
@@ -50,25 +34,45 @@ function formatDate(dateStr: string) {
 
 export default function BookingsPage() {
   const { data: bookings = [], isLoading } = useBookings()
+  const t = useTranslations("BookingsPage")
+
+  const statusConfig = {
+    confirmed: {
+      label: t("confirmed"),
+      className: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
+    },
+    pending: {
+      label: t("pending"),
+      className: "bg-amber/10 text-amber border-amber/20",
+    },
+    "in-progress": {
+      label: t("inProgress"),
+      className: "bg-cyan/10 text-cyan border-cyan/20",
+    },
+    cancelled: {
+      label: t("cancelled"),
+      className: "bg-rose-500/10 text-rose-600 border-rose-500/20",
+    },
+  }
 
   return (
     <div className="space-y-6">
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">Bookings</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">{t("title")}</h1>
           <p className="text-muted-foreground mt-1">
-            Manage berth reservations and customer schedules
+            {t("subtitle")}
           </p>
         </div>
         <div className="flex items-center gap-2 sm:gap-3">
           <Button variant="outline" size="sm" className="border-border/50 hover:bg-muted/50">
             <Filter className="w-4 h-4 mr-2" />
-            Filter
+            {t("filter")}
           </Button>
           <Button className="bg-navy hover:bg-navy-light text-white shadow-md shadow-navy/20 transition-all duration-300 hover:-translate-y-0.5" size="sm">
             <Plus className="w-4 h-4 mr-2" />
-            New Booking
+            {t("newBooking")}
           </Button>
         </div>
       </div>
@@ -76,10 +80,10 @@ export default function BookingsPage() {
       {/* Summary Cards - Glassmorphism */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {[
-          { label: "Total Bookings", value: bookings.length, color: "text-foreground" },
-          { label: "Confirmed", value: bookings.filter(b => b.status === "confirmed").length, color: "text-emerald-600" },
-          { label: "Pending", value: bookings.filter(b => b.status === "pending").length, color: "text-amber" },
-          { label: "In Progress", value: bookings.filter(b => b.status === "in-progress").length, color: "text-cyan" },
+          { label: t("totalBookings"), value: bookings.length, color: "text-foreground" },
+          { label: t("confirmed"), value: bookings.filter(b => b.status === "confirmed").length, color: "text-emerald-600" },
+          { label: t("pending"), value: bookings.filter(b => b.status === "pending").length, color: "text-amber" },
+          { label: t("inProgress"), value: bookings.filter(b => b.status === "in-progress").length, color: "text-cyan" },
         ].map((stat) => (
           <Card key={stat.label} className="bg-card/80 backdrop-blur-sm border-border/40">
             <CardContent className="p-4">
@@ -98,9 +102,9 @@ export default function BookingsPage() {
               <Calendar className="w-5 h-5" />
             </div>
             <div>
-              <CardTitle className="text-lg">All Bookings</CardTitle>
+              <CardTitle className="text-lg">{t("allBookings")}</CardTitle>
               <CardDescription>
-                {bookings.length} reservations total
+                {bookings.length} {t("reservationsTotal")}
               </CardDescription>
             </div>
           </div>
@@ -111,11 +115,11 @@ export default function BookingsPage() {
             <Table>
               <TableHeader>
                 <TableRow className="hover:bg-transparent border-border/50">
-                  <TableHead className="pl-6">Customer Name</TableHead>
-                  <TableHead>Arrival</TableHead>
-                  <TableHead>Departure</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="pr-6 text-right">Actions</TableHead>
+                  <TableHead className="pl-6">{t("customerName")}</TableHead>
+                  <TableHead>{t("arrival")}</TableHead>
+                  <TableHead>{t("departure")}</TableHead>
+                  <TableHead>{t("status")}</TableHead>
+                  <TableHead className="pr-6 text-right">{t("actions")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -158,16 +162,16 @@ export default function BookingsPage() {
                           <DropdownMenuContent align="end" className="w-40">
                             <DropdownMenuItem>
                               <Eye className="w-4 h-4 mr-2" />
-                              View Details
+                              {t("viewDetails")}
                             </DropdownMenuItem>
                             <DropdownMenuItem>
                               <Pencil className="w-4 h-4 mr-2" />
-                              Edit Booking
+                              {t("editBooking")}
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem className="text-destructive focus:text-destructive">
                               <Trash2 className="w-4 h-4 mr-2" />
-                              Cancel
+                              {t("cancel")}
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
@@ -212,7 +216,7 @@ export default function BookingsPage() {
           {/* Table Footer */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 sm:px-6 py-4 border-t border-border/30 bg-muted/20">
             <p className="text-sm text-muted-foreground">
-              Showing <span className="font-medium text-foreground">{bookings.length}</span> bookings
+              {t("showing")} <span className="font-medium text-foreground">{bookings.length}</span> {t("allBookings").toLowerCase()}
             </p>
             <div className="flex items-center gap-3 sm:gap-4">
               {Object.entries(statusConfig).slice(0, 3).map(([key, config]) => (

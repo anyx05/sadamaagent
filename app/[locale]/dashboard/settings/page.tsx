@@ -20,10 +20,12 @@ import { User, Building, Bell, Shield, Bot, Sparkles, Globe, Zap, Code } from "l
 import { useEffect } from "react"
 import { useAgentSettings, useUpdateAgentSettings } from "@/lib/queries/settings"
 import { toast } from "sonner"
+import { useTranslations } from "next-intl"
 
 export default function SettingsPage() {
   const { data: settings, isLoading } = useAgentSettings()
   const { mutate: updateSettings, isPending: isSaving } = useUpdateAgentSettings()
+  const t = useTranslations("SettingsPage")
 
   const [systemPrompt, setSystemPrompt] = useState("")
   const [language, setLanguage] = useState("en")
@@ -41,10 +43,10 @@ export default function SettingsPage() {
       language
     }, {
       onSuccess: () => {
-        toast.success("AI Configuration saved to database.")
+        toast.success(t("saveSuccess"))
       },
       onError: (err) => {
-        toast.error("Failed to save settings: " + err.message)
+        toast.error(t("saveError") + err.message)
       }
     })
   }
@@ -66,10 +68,10 @@ export default function SettingsPage() {
       {/* Page Header */}
       <div>
         <h1 className="text-2xl font-bold tracking-tight text-foreground">
-          Agent Settings
+          {t("title")}
         </h1>
         <p className="text-muted-foreground mt-1">
-          Configure your AI assistant and application preferences
+          {t("subtitle")}
         </p>
       </div>
 
@@ -89,11 +91,11 @@ export default function SettingsPage() {
             </div>
             <div>
               <CardTitle className="text-lg text-white flex items-center gap-2">
-                AI Configuration
+                {t("aiConfig")}
                 <Sparkles className="w-4 h-4 text-cyan" />
               </CardTitle>
               <CardDescription className="text-white/50">
-                Customize how your AI assistant behaves and responds
+                {t("aiConfigDesc")}
               </CardDescription>
             </div>
           </div>
@@ -103,21 +105,21 @@ export default function SettingsPage() {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <Label htmlFor="systemPrompt" className="text-sm font-medium text-white/80">
-                System Prompt
+                {t("systemPrompt")}
               </Label>
               <span className="text-xs text-white/40 font-mono">
-                {systemPrompt.length} chars
+                {systemPrompt.length} {t("chars")}
               </span>
             </div>
             <Textarea
               id="systemPrompt"
               value={systemPrompt}
               onChange={(e) => setSystemPrompt(e.target.value)}
-              placeholder="Enter instructions for how your AI assistant should behave..."
+              placeholder={t("systemPromptPlaceholder")}
               className="min-h-[180px] resize-y bg-white/[0.05] border-white/10 text-white placeholder:text-white/30 focus:border-cyan focus:ring-cyan/20 font-mono text-sm"
             />
             <p className="text-xs text-white/40">
-              This prompt defines the personality, knowledge, and behavior of your marina AI assistant.
+              {t("systemPromptHelp")}
             </p>
           </div>
 
@@ -127,7 +129,7 @@ export default function SettingsPage() {
             <div className="space-y-3">
               <Label className="text-sm font-medium text-white/80 flex items-center gap-2">
                 <Globe className="w-4 h-4 text-cyan/70" />
-                Default Language
+                {t("defaultLanguage")}
               </Label>
               <Select value={language} onValueChange={setLanguage}>
                 <SelectTrigger className="bg-white/[0.05] border-white/10 text-white">
@@ -148,7 +150,7 @@ export default function SettingsPage() {
             <div className="space-y-3">
               <Label className="text-sm font-medium text-white/80 flex items-center gap-2">
                 <Zap className="w-4 h-4 text-cyan/70" />
-                AI Model
+                {t("aiModel")}
               </Label>
               <div className="h-10 px-3 flex items-center rounded-md bg-white/[0.05] border border-white/10 text-white/70 text-sm">
                 gpt-4-turbo-preview
@@ -158,15 +160,15 @@ export default function SettingsPage() {
 
           {/* AI Feature Toggles */}
           <div className="space-y-4 pt-4 border-t border-white/10">
-            <p className="text-xs uppercase tracking-wider text-white/30 font-medium">AI Features</p>
+            <p className="text-xs uppercase tracking-wider text-white/30 font-medium">{t("aiFeatures")}</p>
             
             <div className="space-y-3">
               <div className="flex items-center justify-between py-2">
                 <div className="flex items-center gap-3">
                   <Zap className="w-4 h-4 text-cyan/50" />
                   <div>
-                    <p className="text-sm font-medium text-white/80">Streaming Responses</p>
-                    <p className="text-xs text-white/40">Show AI responses as they generate</p>
+                    <p className="text-sm font-medium text-white/80">{t("streaming")}</p>
+                    <p className="text-xs text-white/40">{t("streamingDesc")}</p>
                   </div>
                 </div>
                 <Switch
@@ -180,8 +182,8 @@ export default function SettingsPage() {
                 <div className="flex items-center gap-3">
                   <Code className="w-4 h-4 text-cyan/50" />
                   <div>
-                    <p className="text-sm font-medium text-white/80">Code Highlighting</p>
-                    <p className="text-xs text-white/40">Syntax highlight code blocks in responses</p>
+                    <p className="text-sm font-medium text-white/80">{t("codeHighlight")}</p>
+                    <p className="text-xs text-white/40">{t("codeHighlightDesc")}</p>
                   </div>
                 </div>
                 <Switch
@@ -195,8 +197,8 @@ export default function SettingsPage() {
                 <div className="flex items-center gap-3">
                   <Sparkles className="w-4 h-4 text-cyan/50" />
                   <div>
-                    <p className="text-sm font-medium text-white/80">Auto-Suggestions</p>
-                    <p className="text-xs text-white/40">Show smart suggestions while typing</p>
+                    <p className="text-sm font-medium text-white/80">{t("autoSuggest")}</p>
+                    <p className="text-xs text-white/40">{t("autoSuggestDesc")}</p>
                   </div>
                 </div>
                 <Switch
@@ -214,7 +216,7 @@ export default function SettingsPage() {
               disabled={isSaving || isLoading}
               className="bg-cyan hover:bg-cyan-light text-navy font-semibold shadow-lg shadow-cyan/25 transition-all duration-300 hover:-translate-y-0.5"
             >
-              {isSaving ? "Saving..." : "Save AI Settings"}
+              {isSaving ? t("saving") : t("saveAiSettings")}
             </Button>
           </div>
         </CardContent>
@@ -228,9 +230,9 @@ export default function SettingsPage() {
               <User className="w-5 h-5" />
             </div>
             <div>
-              <CardTitle className="text-lg">Profile Settings</CardTitle>
+              <CardTitle className="text-lg">{t("profileTitle")}</CardTitle>
               <CardDescription>
-                Update your personal information
+                {t("profileDesc")}
               </CardDescription>
             </div>
           </div>
@@ -239,16 +241,16 @@ export default function SettingsPage() {
           <FieldGroup>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Field>
-                <FieldLabel htmlFor="firstName">First Name</FieldLabel>
+                <FieldLabel htmlFor="firstName">{t("firstName")}</FieldLabel>
                 <Input id="firstName" defaultValue="Captain" className="h-10" />
               </Field>
               <Field>
-                <FieldLabel htmlFor="lastName">Last Name</FieldLabel>
+                <FieldLabel htmlFor="lastName">{t("lastName")}</FieldLabel>
                 <Input id="lastName" defaultValue="Admin" className="h-10" />
               </Field>
             </div>
             <Field>
-              <FieldLabel htmlFor="email">Email Address</FieldLabel>
+              <FieldLabel htmlFor="email">{t("email")}</FieldLabel>
               <Input 
                 id="email" 
                 type="email" 
@@ -257,7 +259,7 @@ export default function SettingsPage() {
               />
             </Field>
             <Field>
-              <FieldLabel htmlFor="phone">Phone Number</FieldLabel>
+              <FieldLabel htmlFor="phone">{t("phone")}</FieldLabel>
               <Input 
                 id="phone" 
                 type="tel" 
@@ -268,7 +270,7 @@ export default function SettingsPage() {
           </FieldGroup>
           <div className="flex justify-end mt-6">
             <Button className="bg-navy hover:bg-navy-light text-white">
-              Save Changes
+              {t("saveChanges")}
             </Button>
           </div>
         </CardContent>
@@ -282,9 +284,9 @@ export default function SettingsPage() {
               <Building className="w-5 h-5" />
             </div>
             <div>
-              <CardTitle className="text-lg">Organization</CardTitle>
+              <CardTitle className="text-lg">{t("orgTitle")}</CardTitle>
               <CardDescription>
-                Configure your marina authority details
+                {t("orgDesc")}
               </CardDescription>
             </div>
           </div>
@@ -292,7 +294,7 @@ export default function SettingsPage() {
         <CardContent>
           <FieldGroup>
             <Field>
-              <FieldLabel htmlFor="orgName">Organization Name</FieldLabel>
+              <FieldLabel htmlFor="orgName">{t("orgName")}</FieldLabel>
               <Input 
                 id="orgName" 
                 defaultValue="Tallinn Marina Authority" 
@@ -300,7 +302,7 @@ export default function SettingsPage() {
               />
             </Field>
             <Field>
-              <FieldLabel htmlFor="timezone">Timezone</FieldLabel>
+              <FieldLabel htmlFor="timezone">{t("timezone")}</FieldLabel>
               <Input 
                 id="timezone" 
                 defaultValue="Europe/Tallinn (EET)" 
@@ -320,9 +322,9 @@ export default function SettingsPage() {
               <Bell className="w-5 h-5" />
             </div>
             <div>
-              <CardTitle className="text-lg">Notifications</CardTitle>
+              <CardTitle className="text-lg">{t("notifTitle")}</CardTitle>
               <CardDescription>
-                Choose how you want to be notified
+                {t("notifDesc")}
               </CardDescription>
             </div>
           </div>
@@ -330,10 +332,10 @@ export default function SettingsPage() {
         <CardContent>
           <div className="space-y-1">
             {[
-              { key: "bookings", label: "Booking confirmations", description: "Get notified when a berth booking is confirmed" },
-              { key: "arrivals", label: "Vessel arrivals", description: "Receive alerts when vessels arrive at marina" },
-              { key: "maintenance", label: "Maintenance alerts", description: "Be notified about scheduled maintenance" },
-              { key: "reports", label: "Weekly reports", description: "Receive a weekly summary of marina activities" },
+              { key: "bookings", label: t("notifBookings"), description: t("notifBookingsDesc") },
+              { key: "arrivals", label: t("notifArrivals"), description: t("notifArrivalsDesc") },
+              { key: "maintenance", label: t("notifMaintenance"), description: t("notifMaintenanceDesc") },
+              { key: "reports", label: t("notifReports"), description: t("notifReportsDesc") },
             ].map((item) => (
               <div 
                 key={item.key}
@@ -362,9 +364,9 @@ export default function SettingsPage() {
               <Shield className="w-5 h-5" />
             </div>
             <div>
-              <CardTitle className="text-lg">Security</CardTitle>
+              <CardTitle className="text-lg">{t("securityTitle")}</CardTitle>
               <CardDescription>
-                Manage your security preferences
+                {t("securityDesc")}
               </CardDescription>
             </div>
           </div>
@@ -373,29 +375,29 @@ export default function SettingsPage() {
           <div className="space-y-1">
             <div className="flex items-center justify-between py-3 border-b border-border/30">
               <div>
-                <p className="text-sm font-medium text-foreground">Change Password</p>
-                <p className="text-xs text-muted-foreground">Update your password regularly for security</p>
+                <p className="text-sm font-medium text-foreground">{t("changePassword")}</p>
+                <p className="text-xs text-muted-foreground">{t("changePasswordDesc")}</p>
               </div>
               <Button variant="outline" size="sm" className="border-border/50">
-                Update
+                {t("update")}
               </Button>
             </div>
             <div className="flex items-center justify-between py-3 border-b border-border/30">
               <div>
-                <p className="text-sm font-medium text-foreground">Two-Factor Authentication</p>
-                <p className="text-xs text-muted-foreground">Add an extra layer of security</p>
+                <p className="text-sm font-medium text-foreground">{t("twoFactor")}</p>
+                <p className="text-xs text-muted-foreground">{t("twoFactorDesc")}</p>
               </div>
               <Button variant="outline" size="sm" className="border-border/50">
-                Enable
+                {t("enable")}
               </Button>
             </div>
             <div className="flex items-center justify-between py-3">
               <div>
-                <p className="text-sm font-medium text-foreground">Active Sessions</p>
-                <p className="text-xs text-muted-foreground">Manage your logged-in devices</p>
+                <p className="text-sm font-medium text-foreground">{t("activeSessions")}</p>
+                <p className="text-xs text-muted-foreground">{t("activeSessionsDesc")}</p>
               </div>
               <Button variant="outline" size="sm" className="border-border/50">
-                View All
+                {t("viewAll")}
               </Button>
             </div>
           </div>
@@ -405,21 +407,21 @@ export default function SettingsPage() {
       {/* Danger Zone */}
       <Card className="border-rose-500/20 bg-card/80 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="text-lg text-rose-600">Danger Zone</CardTitle>
+          <CardTitle className="text-lg text-rose-600">{t("dangerZone")}</CardTitle>
           <CardDescription>
-            Irreversible and destructive actions
+            {t("dangerDesc")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
-              <p className="text-sm font-medium text-foreground">Delete Account</p>
+              <p className="text-sm font-medium text-foreground">{t("deleteAccount")}</p>
               <p className="text-xs text-muted-foreground">
-                Permanently delete your account and all associated data
+                {t("deleteAccountDesc")}
               </p>
             </div>
             <Button variant="destructive" size="sm">
-              Delete Account
+              {t("deleteAccount")}
             </Button>
           </div>
         </CardContent>
