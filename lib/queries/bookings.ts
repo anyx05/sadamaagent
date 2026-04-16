@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { createClient } from '@/lib/supabase/client';
 import { useCurrentPortId } from './berths';
 
@@ -45,6 +45,54 @@ export function useBookings() {
         departure: b.departure_date,
         status: b.status,
       })) as Booking[];
+    }
+  });
+}
+
+// Cancel a booking (set status to 'cancelled')
+export function useCancelBooking() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (bookingId: string) => {
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from('bookings')
+        .update({ status: 'cancelled' })
+        .eq('id', bookingId)
+        .select()
+        .single();
+
+      if (error) throw new Error(error.message);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['bookings'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
+    }
+  });
+}
+
+// Update booking status (confirm, cancel, etc.)
+export function useUpdateBookingStatus() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ bookingId, status }: { bookingId: string; status: string }) => {
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from('bookings')
+        .update({ status })
+        .eq('id', bookingId)
+        .select()
+        .single();
+
+      if (error) throw new Error(error.message);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['bookings'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
     }
   });
 }

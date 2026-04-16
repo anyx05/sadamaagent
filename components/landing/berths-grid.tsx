@@ -2,8 +2,8 @@
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Anchor, Ship, Ruler, Waves, Clock, Euro } from "lucide-react"
-import { useBerths } from "@/lib/queries/berths"
+import { Anchor, Ship, Ruler, Waves, Clock, Euro, MapPin } from "lucide-react"
+import { usePublicPortsAndBerths } from "@/lib/queries/public"
 import { useTranslations } from "next-intl"
 
 const statusColors = {
@@ -15,8 +15,10 @@ const statusColors = {
 }
 
 export function BerthsGrid() {
-  const { data: berths, isLoading, error } = useBerths()
+  const { data, isLoading, error } = usePublicPortsAndBerths()
   const t = useTranslations("Berths")
+
+  const berths = data?.berths ?? []
 
   const statusLabels = {
     available: t("statusAvailable"),
@@ -107,9 +109,17 @@ export function BerthsGrid() {
                     </Badge>
                   </div>
 
-                  <h3 className="text-base sm:text-lg font-semibold text-foreground mb-2 tracking-tight group-hover:text-navy transition-colors duration-300">
+                  <h3 className="text-base sm:text-lg font-semibold text-foreground mb-1 tracking-tight group-hover:text-navy transition-colors duration-300">
                     {berth.name}
                   </h3>
+
+                  {/* Port name */}
+                  <div className="flex items-center gap-1.5 mb-3">
+                    <MapPin className="w-3 h-3 text-muted-foreground/60" />
+                    <span className="text-xs text-muted-foreground">
+                      {berth.port_name}
+                    </span>
+                  </div>
 
                   {/* Price - refined hierarchy */}
                   <div className="flex items-baseline gap-1 mb-4">
@@ -150,7 +160,7 @@ export function BerthsGrid() {
                         <Waves className="w-3.5 h-3.5 text-muted-foreground/70" />
                         <span className="text-xs sm:text-sm">
                           <span className="font-semibold text-foreground">
-                            {berth.max_draft}m
+                            {berth.max_draft_m}m
                           </span>
                           <span className="text-muted-foreground ml-1">
                             {t("draft")}
@@ -161,7 +171,7 @@ export function BerthsGrid() {
                         <Ruler className="w-3.5 h-3.5 text-muted-foreground/70" />
                         <span className="text-xs sm:text-sm">
                           <span className="font-semibold text-foreground">
-                            {berth.max_vessel_length}m
+                            {berth.max_length_m}m
                           </span>
                           <span className="text-muted-foreground ml-1">
                             {t("length")}

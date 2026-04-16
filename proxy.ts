@@ -35,8 +35,8 @@ export default async function proxy(request: NextRequest) {
   // supabase.auth.getUser().
   const { data: { user } } = await supabase.auth.getUser();
 
-  // 4. Secure the Dashboard routes
-  if (request.nextUrl.pathname.includes("/dashboard") && !user) {
+  // 4. Secure the Dashboard routes (strict path match for /[locale]/dashboard*)
+  if (/^\/[a-z]{2}\/dashboard(\/|$)/.test(request.nextUrl.pathname) && !user) {
     const url = request.nextUrl.clone();
     // Redirect to root login page, next-intl will automatically apply the locale prefix
     url.pathname = "/login";

@@ -20,8 +20,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-import { useBookings } from "@/lib/queries/bookings"
+import { useBookings, useCancelBooking } from "@/lib/queries/bookings"
 import { useTranslations } from "next-intl"
+import { toast } from "sonner"
 
 function formatDate(dateStr: string) {
   if (!dateStr) return "N/A"
@@ -34,7 +35,15 @@ function formatDate(dateStr: string) {
 
 export default function BookingsPage() {
   const { data: bookings = [], isLoading } = useBookings()
+  const cancelBooking = useCancelBooking()
   const t = useTranslations("BookingsPage")
+
+  const handleCancel = (bookingId: string, customerName: string) => {
+    cancelBooking.mutate(bookingId, {
+      onSuccess: () => toast.success(`Booking for ${customerName} cancelled.`),
+      onError: (err) => toast.error(`Failed to cancel: ${err.message}`),
+    })
+  }
 
   const statusConfig = {
     confirmed: {
@@ -169,7 +178,10 @@ export default function BookingsPage() {
                               {t("editBooking")}
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem className="text-destructive focus:text-destructive">
+                            <DropdownMenuItem 
+                              className="text-destructive focus:text-destructive"
+                              onClick={() => handleCancel(booking.id, booking.customerName)}
+                            >
                               <Trash2 className="w-4 h-4 mr-2" />
                               {t("cancel")}
                             </DropdownMenuItem>
@@ -200,11 +212,11 @@ export default function BookingsPage() {
                   </div>
                   <div className="flex items-center gap-4 text-sm">
                     <div>
-                      <p className="text-muted-foreground text-xs">Arrival</p>
+                      <p className="text-muted-foreground text-xs">{t("arrival")}</p>
                       <p className="font-medium tabular-nums">{formatDate(booking.arrival)}</p>
                     </div>
                     <div>
-                      <p className="text-muted-foreground text-xs">Departure</p>
+                      <p className="text-muted-foreground text-xs">{t("departure")}</p>
                       <p className="font-medium tabular-nums">{formatDate(booking.departure)}</p>
                     </div>
                   </div>

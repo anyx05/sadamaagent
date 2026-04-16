@@ -2,6 +2,7 @@
 
 import { AlertTriangle, RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useTranslations } from "next-intl"
 
 export default function DashboardError({
   error,
@@ -10,6 +11,8 @@ export default function DashboardError({
   error: Error & { digest?: string }
   reset: () => void
 }) {
+  const t = useTranslations("DashboardError")
+
   return (
     <div className="flex flex-col items-center justify-center min-h-[400px] gap-6">
       <div className="flex items-center justify-center w-16 h-16 rounded-2xl bg-destructive/10 text-destructive">
@@ -17,10 +20,10 @@ export default function DashboardError({
       </div>
       <div className="text-center space-y-2">
         <h2 className="text-xl font-semibold text-foreground">
-          Something went wrong
+          {t("title")}
         </h2>
         <p className="text-sm text-muted-foreground max-w-md">
-          {error.message || "An unexpected error occurred. Please try again."}
+          {error.message || t("description")}
         </p>
       </div>
       <Button
@@ -29,7 +32,7 @@ export default function DashboardError({
         className="gap-2"
       >
         <RefreshCw className="w-4 h-4" />
-        Try Again
+        {t("tryAgain")}
       </Button>
     </div>
   )

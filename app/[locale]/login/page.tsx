@@ -9,7 +9,7 @@ import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { createClient } from "@/lib/supabase/client"
 import { toast } from "sonner"
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher"
-import { useTranslations } from "next-intl"
+import { useTranslations, useLocale } from "next-intl"
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
@@ -17,13 +17,14 @@ export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const router = useRouter()
-  const supabase = createClient()
+  const locale = useLocale()
   const t = useTranslations("Auth")
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     
+    const supabase = createClient()
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -34,9 +35,11 @@ export default function LoginPage() {
       setIsLoading(false)
     } else {
       toast.success(t("success"))
-      router.push("/dashboard")
+      // Full page navigation ensures auth cookies propagate before middleware checks
+      window.location.href = `/${locale}/dashboard`
     }
   }
+
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-navy px-4 sm:px-6 py-12 overflow-hidden relative">

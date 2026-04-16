@@ -1,8 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
+import { Link, usePathname, useRouter } from "@/i18n/routing"
 import { 
   Anchor, 
   Ship, 
@@ -210,6 +209,9 @@ function SidebarContent({
           collapsed={collapsed} 
           onNavigate={onNavigate}
           label={t("signOut")}
+          signingOutLabel={t("signingOut")}
+          signOutSuccessLabel={t("signOutSuccess")}
+          signOutErrorLabel={t("signOutError")}
         />
 
         {/* Collapse Toggle - Desktop Only */}
@@ -240,7 +242,7 @@ function SidebarContent({
   )
 }
 
-function SignOutButton({ collapsed, onNavigate, label }: { collapsed: boolean; onNavigate?: () => void; label: string }) {
+function SignOutButton({ collapsed, onNavigate, label, signingOutLabel, signOutSuccessLabel, signOutErrorLabel }: { collapsed: boolean; onNavigate?: () => void; label: string; signingOutLabel: string; signOutSuccessLabel: string; signOutErrorLabel: string }) {
   const [isSigningOut, setIsSigningOut] = useState(false)
   const router = useRouter()
 
@@ -250,10 +252,10 @@ function SignOutButton({ collapsed, onNavigate, label }: { collapsed: boolean; o
       const supabase = createClient()
       await supabase.auth.signOut()
       onNavigate?.()
-      toast.success("Signed out successfully")
+      toast.success(signOutSuccessLabel)
       router.push("/login")
     } catch (error) {
-      toast.error("Failed to sign out")
+      toast.error(signOutErrorLabel)
       setIsSigningOut(false)
     }
   }
@@ -277,7 +279,7 @@ function SignOutButton({ collapsed, onNavigate, label }: { collapsed: boolean; o
         "whitespace-nowrap transition-opacity duration-300",
         collapsed ? "opacity-0 w-0" : "opacity-100"
       )}>
-        {isSigningOut ? "Signing out..." : label}
+        {isSigningOut ? signingOutLabel : label}
       </span>
     </button>
   )

@@ -103,7 +103,8 @@
     "signIn": "Logi sisse",
     "securityNotice": "Ettevõtte tasemel turvalisus. Otsast-lõpuni krüpteeritud.",
     "success": "Konto loodud! Kontrolli oma e-posti kinnituseks.",
-    "mismatch": "Salasõnad ei kattu."
+    "mismatch": "Salasõnad ei kattu.",
+    "weakPassword": "Salasõna peab olema vähemalt 8 tähemärki pikk."
   },
   "Dashboard": {
     "navigation": "Navigeerimine",
@@ -112,10 +113,18 @@
     "bookings": "Broneeringud",
     "settings": "Agendi Seaded",
     "signOut": "Logi Välja",
+    "signingOut": "Väljalogimine...",
+    "signOutSuccess": "Edukalt välja logitud.",
+    "signOutError": "Väljalogimine ebaõnnestus.",
     "collapse": "Peida",
     "search": "Otsi kaikohti, broneeringuid...",
     "authority": "Tallinna Sadamaamet",
     "online": "Aktiivne"
+  },
+  "DashboardError": {
+    "title": "Midagi läks valesti",
+    "description": "Ilmnes ootamatu viga. Palun proovi uuesti.",
+    "tryAgain": "Proovi Uuesti"
   },
   "DashboardHome": {
     "title": "Töölaud",
@@ -249,5 +258,14 @@
     "dangerDesc": "Pöördumatud ja hävitavad tegevused",
     "deleteAccount": "Kustuta Konto",
     "deleteAccountDesc": "Kustuta jäädavalt oma konto ja kõik seotud andmed"
+  },
+  "FeaturedPorts": {
+    "title": "Meie Sadamad ja Marinid",
+    "subtitle": "Avasta Eesti parimad sadamad. Iga sadam pakub ainulaadseid rajatisi, asukohti ja kaikoha valikuid igat tüüpi alustele.",
+    "available": "vaba",
+    "berthsTotal": "kaikohta kokku",
+    "viewBerths": "Vaata Vabu Kaikohti",
+    "empty": "Hetkel pole sadamaid saadaval.",
+    "error": "Viga sadamate laadimisel:"
   }
 }

@@ -19,7 +19,6 @@ export default function SignUpPage() {
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const router = useRouter()
-  const supabase = createClient()
   const t = useTranslations("SignUp")
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -30,8 +29,14 @@ export default function SignUpPage() {
       return
     }
 
+    if (password.length < 8) {
+      toast.error(t("weakPassword"))
+      return
+    }
+
     setIsLoading(true)
 
+    const supabase = createClient()
     const { error } = await supabase.auth.signUp({
       email,
       password,

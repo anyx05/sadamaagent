@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useMemo } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -17,11 +17,14 @@ export function ChatWidget({ isOpen, onToggle }: ChatWidgetProps) {
   const t = useTranslations("ChatWidget")
   const locale = useLocale()
   
+  // Generate a unique session ID per chat session (not shared across all users)
+  const sessionId = useMemo(() => `guest-${crypto.randomUUID()}`, [])
+  
   const [message, setMessage] = useState("")
-  const [messages, setMessages] = useState([
+  const [messages, setMessages] = useState<{ id: number; role: 'user' | 'assistant'; content: string }[]>([
     {
       id: 1,
-      role: "assistant" as const,
+      role: "assistant",
       content: t("welcome"),
     }
   ])
@@ -49,6 +52,10 @@ export function ChatWidget({ isOpen, onToggle }: ChatWidgetProps) {
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
       const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY
       
+      if (!supabaseUrl || !publishableKey) {
+        throw new Error('Missing configuration')
+      }
+      
       const res = await fetch(`${supabaseUrl}/functions/v1/chat-handler`, {
         method: "POST",
         headers: {
@@ -57,19 +64,32 @@ export function ChatWidget({ isOpen, onToggle }: ChatWidgetProps) {
         },
         body: JSON.stringify({
           messages: [...messages, userMsg].map(m => ({ role: m.role, content: m.content })),
-          sessionId: "guest-session",
+          sessionId: sessionId,
           locale: locale
         })
       })
 
       const data = await res.json()
       
+      if (!res.ok) {
+        // Edge function returned an error — use the fallback text if available
+        setMessages(prev => [
+          ...prev, 
+          { 
+            id: Date.now() + 1, 
+            role: 'assistant' as const, 
+            content: data.text || data.error || 'An error occurred. Please try again.' 
+          }
+        ])
+        return
+      }
+      
       setMessages(prev => [
         ...prev, 
         { 
           id: Date.now() + 1, 
-          role: 'assistant', 
-          content: data.text || 'Error obtaining response' 
+          role: 'assistant' as const, 
+          content: data.text || 'I received an empty response. Please try again.' 
         }
       ])
     } catch (e) {
@@ -77,8 +97,8 @@ export function ChatWidget({ isOpen, onToggle }: ChatWidgetProps) {
         ...prev, 
         { 
           id: Date.now() + 1, 
-          role: 'assistant', 
-          content: 'Network connectivity error. Double check your API Keys.' 
+          role: 'assistant' as const, 
+          content: 'Network connectivity error. Please check your connection and try again.' 
         }
       ])
     } finally {

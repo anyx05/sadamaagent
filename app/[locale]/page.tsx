@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { Header } from "@/components/landing/header"
 import { HeroSection } from "@/components/landing/hero-section"
+import { FeaturedPorts } from "@/components/landing/featured-ports"
 import { BerthsGrid } from "@/components/landing/berths-grid"
 import { HowItWorks } from "@/components/landing/how-it-works"
 import { Footer } from "@/components/landing/footer"
@@ -16,6 +17,7 @@ export default function HomePage() {
       <Header />
       <HeroSection onOpenChat={() => setIsChatOpen(true)} />
       <HowItWorks />
+      <FeaturedPorts />
       <BerthsGrid />
       <Footer />
       <ChatWidget 

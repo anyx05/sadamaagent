@@ -103,7 +103,8 @@
     "signIn": "Sign in",
     "securityNotice": "Enterprise-grade security. End-to-end encryption.",
     "success": "Account created! Check your email for verification.",
-    "mismatch": "Passwords do not match."
+    "mismatch": "Passwords do not match.",
+    "weakPassword": "Password must be at least 8 characters long."
   },
   "Dashboard": {
     "navigation": "Navigation",
@@ -112,10 +113,18 @@
     "bookings": "Bookings",
     "settings": "Agent Settings",
     "signOut": "Sign Out",
+    "signingOut": "Signing out...",
+    "signOutSuccess": "Signed out successfully.",
+    "signOutError": "Failed to sign out.",
     "collapse": "Collapse",
     "search": "Search berths, bookings...",
     "authority": "Tallinn Marina Authority",
     "online": "Online"
+  },
+  "DashboardError": {
+    "title": "Something went wrong",
+    "description": "An unexpected error occurred. Please try again.",
+    "tryAgain": "Try Again"
   },
   "DashboardHome": {
     "title": "Dashboard",
@@ -249,5 +258,14 @@
     "dangerDesc": "Irreversible and destructive actions",
     "deleteAccount": "Delete Account",
     "deleteAccountDesc": "Permanently delete your account and all associated data"
+  },
+  "FeaturedPorts": {
+    "title": "Featured Ports & Marinas",
+    "subtitle": "Discover premium harbours across Estonia. Each port offers unique facilities, locations, and berth options for every type of vessel.",
+    "available": "available",
+    "berthsTotal": "berths total",
+    "viewBerths": "View Available Berths",
+    "empty": "No ports available at the moment.",
+    "error": "Error loading ports:"
   }
 }

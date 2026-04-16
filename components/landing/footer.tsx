@@ -1,4 +1,4 @@
-import Link from "next/link"
+import { Link } from "@/i18n/routing"
 import { Anchor, Sailboat, Ship, Waves } from "lucide-react"
 import { useTranslations } from "next-intl"
 
