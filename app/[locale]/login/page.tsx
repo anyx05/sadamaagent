@@ -6,27 +6,47 @@ import { Anchor, ArrowLeft, Eye, EyeOff, Terminal } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
+import { FormError } from "@/components/ui/form-error"
 import { createClient } from "@/lib/supabase/client"
 import { toast } from "sonner"
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher"
 import { useTranslations, useLocale } from "next-intl"
+import { validateLoginForm } from "@/lib/validations"
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const router = useRouter()
   const locale = useLocale()
   const t = useTranslations("Auth")
 
+  const clearError = (field: string) => {
+    setFieldErrors(prev => {
+      const next = { ...prev }
+      delete next[field]
+      return next
+    })
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Client-side validation
+    const { valid, errors } = validateLoginForm(email, password)
+    if (!valid) {
+      setFieldErrors(errors)
+      return
+    }
+
+    setFieldErrors({})
     setIsLoading(true)
     
     const supabase = createClient()
     const { error } = await supabase.auth.signInWithPassword({
-      email,
+      email: email.trim(),
       password,
     })
 
@@ -35,11 +55,9 @@ export default function LoginPage() {
       setIsLoading(false)
     } else {
       toast.success(t("success"))
-      // Full page navigation ensures auth cookies propagate before middleware checks
       window.location.href = `/${locale}/dashboard`
     }
   }
-
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-navy px-4 sm:px-6 py-12 overflow-hidden relative">
@@ -94,7 +112,7 @@ export default function LoginPage() {
 
             {/* Form */}
             <div className="px-8 pb-8">
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit} noValidate>
                 <FieldGroup>
                   <Field>
                     <FieldLabel htmlFor="email" className="text-white/70 text-sm font-medium">
@@ -104,12 +122,13 @@ export default function LoginPage() {
                       id="email"
                       type="email"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e) => { setEmail(e.target.value); clearError("email"); }}
                       placeholder={t("emailPlaceholder")}
-                      className="h-12 bg-white/[0.05] border-white/10 text-white placeholder:text-white/30 focus:border-cyan focus:ring-cyan/20 transition-all duration-300"
+                      className={`h-12 bg-white/[0.05] border-white/10 text-white placeholder:text-white/30 focus:border-cyan focus:ring-cyan/20 transition-all duration-300 ${fieldErrors.email ? "border-rose-500/50" : ""}`}
                       autoComplete="email"
-                      required
+                      aria-invalid={!!fieldErrors.email}
                     />
+                    <FormError message={fieldErrors.email} />
                   </Field>
 
                   <Field>
@@ -121,11 +140,11 @@ export default function LoginPage() {
                         id="password"
                         type={showPassword ? "text" : "password"}
                         value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        onChange={(e) => { setPassword(e.target.value); clearError("password"); }}
                         placeholder={t("passwordPlaceholder")}
-                        className="h-12 bg-white/[0.05] border-white/10 text-white placeholder:text-white/30 pr-12 focus:border-cyan focus:ring-cyan/20 transition-all duration-300"
+                        className={`h-12 bg-white/[0.05] border-white/10 text-white placeholder:text-white/30 pr-12 focus:border-cyan focus:ring-cyan/20 transition-all duration-300 ${fieldErrors.password ? "border-rose-500/50" : ""}`}
                         autoComplete="current-password"
-                        required
+                        aria-invalid={!!fieldErrors.password}
                       />
                       <button
                         type="button"
@@ -140,6 +159,7 @@ export default function LoginPage() {
                         )}
                       </button>
                     </div>
+                    <FormError message={fieldErrors.password} />
                   </Field>
 
                   <div className="flex items-center justify-between text-sm">
@@ -177,55 +197,6 @@ export default function LoginPage() {
                   </Button>
                 </FieldGroup>
               </form>
-
-              {/* Divider */}
-              <div className="relative my-8">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-white/10"></div>
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-transparent px-3 text-white/30 backdrop-blur-sm">
-                    {t("or")}
-                  </span>
-                </div>
-              </div>
-
-              {/* Social Login */}
-              <div className="grid grid-cols-3 gap-3">
-                {/* Google */}
-                <Button 
-                  type="button"
-                  variant="outline" 
-                  className="h-11 bg-white/[0.03] border-white/10 text-white/70 hover:bg-white/[0.08] hover:text-white hover:border-white/20 transition-all duration-300"
-                >
-                  <svg className="w-5 h-5 cursor-pointer" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"/>
-                  </svg>
-                  <span className="sr-only">Sign in with Google</span>
-                </Button>
-                {/* Apple */}
-                <Button 
-                  type="button"
-                  variant="outline" 
-                  className="h-11 bg-white/[0.03] border-white/10 text-white/70 hover:bg-white/[0.08] hover:text-white hover:border-white/20 transition-all duration-300"
-                >
-                  <svg className="w-5 h-5 cursor-pointer" viewBox="0 0 384 512">
-                    <path fill="currentColor" d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/>
-                  </svg>
-                  <span className="sr-only">Sign in with Apple</span>
-                </Button>
-                {/* Facebook */}
-                <Button 
-                  type="button"
-                  variant="outline" 
-                  className="h-11 bg-white/[0.03] border-white/10 text-white/70 hover:bg-white/[0.08] hover:text-white hover:border-white/20 transition-all duration-300"
-                >
-                  <svg className="w-5 h-5 cursor-pointer" viewBox="0 0 320 512">
-                    <path fill="currentColor" d="M279.14 288l14.22-92.66h-88.91v-60.13c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.08 44.38-121.08 124.72v70.62H22.89V288h81.39v224h100.17V288z"/>
-                  </svg>
-                  <span className="sr-only">Sign in with Facebook</span>
-                </Button>
-              </div>
 
               {/* Sign Up Link */}
               <p className="text-center text-sm text-white/40 mt-8">

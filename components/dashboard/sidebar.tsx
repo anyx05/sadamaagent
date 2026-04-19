@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Link, usePathname, useRouter } from "@/i18n/routing"
 import { 
   Anchor, 
@@ -30,6 +30,20 @@ interface SidebarProps {
 
 export function DashboardSidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: SidebarProps) {
   const pathname = usePathname()
+  const [userName, setUserName] = useState("")
+  const [userEmail, setUserEmail] = useState("")
+
+  useEffect(() => {
+    const loadUser = async () => {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        setUserName(user.user_metadata?.full_name || user.email?.split('@')[0] || "User")
+        setUserEmail(user.email || "")
+      }
+    }
+    loadUser()
+  }, [])
 
   return (
     <>
@@ -54,6 +68,8 @@ export function DashboardSidebar({ collapsed, onToggle, mobileOpen, onMobileClos
           onToggle={onToggle}
           pathname={pathname}
           showCollapseButton
+          userName={userName}
+          userEmail={userEmail}
         />
       </aside>
       
@@ -77,6 +93,8 @@ export function DashboardSidebar({ collapsed, onToggle, mobileOpen, onMobileClos
           onToggle={onToggle}
           pathname={pathname}
           onNavigate={onMobileClose}
+          userName={userName}
+          userEmail={userEmail}
         />
       </aside>
     </>
@@ -88,13 +106,17 @@ function SidebarContent({
   onToggle, 
   pathname,
   showCollapseButton,
-  onNavigate
+  onNavigate,
+  userName,
+  userEmail
 }: { 
   collapsed: boolean
   onToggle: () => void
   pathname: string
   showCollapseButton?: boolean
   onNavigate?: () => void
+  userName: string
+  userEmail: string
 }) {
   const t = useTranslations("Dashboard")
 
@@ -199,8 +221,8 @@ function SidebarContent({
             "transition-opacity duration-300 overflow-hidden",
             collapsed ? "opacity-0 w-0" : "opacity-100"
           )}>
-            <p className="text-sm font-medium truncate">Captain Admin</p>
-            <p className="text-xs text-white/40 truncate">admin@maritime.ee</p>
+            <p className="text-sm font-medium truncate">{userName}</p>
+            <p className="text-xs text-white/40 truncate">{userEmail}</p>
           </div>
         </div>
 

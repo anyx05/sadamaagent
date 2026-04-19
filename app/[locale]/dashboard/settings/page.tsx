@@ -21,6 +21,9 @@ import { useEffect } from "react"
 import { useAgentSettings, useUpdateAgentSettings } from "@/lib/queries/settings"
 import { toast } from "sonner"
 import { useTranslations } from "next-intl"
+import { validatePassword, validatePasswordConfirm } from "@/lib/validations"
+import { FormError } from "@/components/ui/form-error"
+import { createClient } from "@/lib/supabase/client"
 
 export default function SettingsPage() {
   const { data: settings, isLoading } = useAgentSettings()
@@ -30,12 +33,37 @@ export default function SettingsPage() {
   const [systemPrompt, setSystemPrompt] = useState("")
   const [language, setLanguage] = useState("en")
 
+  // Profile state — loaded from auth
+  const [profileName, setProfileName] = useState("")
+  const [profileEmail, setProfileEmail] = useState("")
+
+  // Change Password state
+  const [isChangingPassword, setIsChangingPassword] = useState(false)
+  const [newPassword, setNewPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [passwordError, setPasswordError] = useState("")
+  const [confirmPasswordError, setConfirmPasswordError] = useState("")
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false)
+
   useEffect(() => {
     if (settings) {
       setSystemPrompt(settings.systemPrompt)
       setLanguage(settings.language)
     }
   }, [settings])
+
+  // Load user profile from Supabase auth
+  useEffect(() => {
+    const loadProfile = async () => {
+      const supabase = (await import("@/lib/supabase/client")).createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        setProfileName(user.user_metadata?.full_name || "")
+        setProfileEmail(user.email || "")
+      }
+    }
+    loadProfile()
+  }, [])
 
   const handleSaveSettings = () => {
     updateSettings({
@@ -62,6 +90,34 @@ export default function SettingsPage() {
     codeHighlight: true,
     autoSuggest: false,
   })
+
+  const handleUpdatePassword = async () => {
+    setPasswordError("")
+    setConfirmPasswordError("")
+    
+    const pErr = validatePassword(newPassword)
+    const cErr = validatePasswordConfirm(newPassword, confirmPassword)
+    
+    if (pErr || cErr) {
+      if (pErr) setPasswordError(pErr)
+      if (cErr) setConfirmPasswordError(cErr)
+      return
+    }
+
+    setIsUpdatingPassword(true)
+    const supabase = createClient()
+    const { error } = await supabase.auth.updateUser({ password: newPassword })
+    setIsUpdatingPassword(false)
+
+    if (error) {
+      toast.error(error.message)
+    } else {
+      toast.success(t("passwordUpdatedSuccess"))
+      setIsChangingPassword(false)
+      setNewPassword("")
+      setConfirmPassword("")
+    }
+  }
 
   return (
     <div className="space-y-6 max-w-4xl">
@@ -153,7 +209,7 @@ export default function SettingsPage() {
                 {t("aiModel")}
               </Label>
               <div className="h-10 px-3 flex items-center rounded-md bg-white/[0.05] border border-white/10 text-white/70 text-sm">
-                gpt-4-turbo-preview
+                gemini-2.5-flash
               </div>
             </div>
           </div>
@@ -242,11 +298,11 @@ export default function SettingsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Field>
                 <FieldLabel htmlFor="firstName">{t("firstName")}</FieldLabel>
-                <Input id="firstName" defaultValue="Captain" className="h-10" />
+                <Input id="firstName" value={profileName} onChange={(e) => setProfileName(e.target.value)} className="h-10" />
               </Field>
               <Field>
                 <FieldLabel htmlFor="lastName">{t("lastName")}</FieldLabel>
-                <Input id="lastName" defaultValue="Admin" className="h-10" />
+                <Input id="lastName" value="" className="h-10" disabled placeholder="N/A" />
               </Field>
             </div>
             <Field>
@@ -254,8 +310,9 @@ export default function SettingsPage() {
               <Input 
                 id="email" 
                 type="email" 
-                defaultValue="admin@maritime.ee" 
+                value={profileEmail}
                 className="h-10" 
+                disabled
               />
             </Field>
             <Field>
@@ -373,14 +430,63 @@ export default function SettingsPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-1">
-            <div className="flex items-center justify-between py-3 border-b border-border/30">
-              <div>
-                <p className="text-sm font-medium text-foreground">{t("changePassword")}</p>
-                <p className="text-xs text-muted-foreground">{t("changePasswordDesc")}</p>
+            <div className="py-3 border-b border-border/30">
+              <div className="flex items-center justify-between mb-2">
+                <div>
+                  <p className="text-sm font-medium text-foreground">{t("changePassword")}</p>
+                  <p className="text-xs text-muted-foreground">{t("changePasswordDesc")}</p>
+                </div>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="border-border/50"
+                  onClick={() => setIsChangingPassword(!isChangingPassword)}
+                >
+                  {isChangingPassword ? t("cancel") : t("update")}
+                </Button>
               </div>
-              <Button variant="outline" size="sm" className="border-border/50">
-                {t("update")}
-              </Button>
+              
+              {isChangingPassword && (
+                <div className="mt-4 p-4 bg-black/20 rounded-lg border border-white/5 space-y-4">
+                  <Field>
+                    <FieldLabel htmlFor="newPassword">{t("newPassword")}</FieldLabel>
+                    <Input 
+                      id="newPassword" 
+                      type="password" 
+                      value={newPassword}
+                      onChange={(e) => {
+                        setNewPassword(e.target.value)
+                        setPasswordError("")
+                      }}
+                      className="bg-background/50"
+                    />
+                    <FormError message={passwordError} />
+                  </Field>
+                  <Field>
+                    <FieldLabel htmlFor="confirmPassword">{t("confirmPassword")}</FieldLabel>
+                    <Input 
+                      id="confirmPassword" 
+                      type="password" 
+                      value={confirmPassword}
+                      onChange={(e) => {
+                        setConfirmPassword(e.target.value)
+                        setConfirmPasswordError("")
+                      }}
+                      className="bg-background/50"
+                    />
+                    <FormError message={confirmPasswordError} />
+                  </Field>
+                  <div className="flex justify-end pt-2">
+                    <Button 
+                      onClick={handleUpdatePassword} 
+                      disabled={isUpdatingPassword}
+                      className="bg-navy hover:bg-navy-light text-white"
+                    >
+                      {isUpdatingPassword ? t("updating") : t("updatePassword")}
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
             <div className="flex items-center justify-between py-3 border-b border-border/30">
               <div>

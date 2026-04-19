@@ -160,7 +160,7 @@
   },
   "BerthManager": {
     "title": "Kaikoha Haldur",
-    "subtitle": "Kaikohtade täielik haldamine",
+    "subtitle": "Vaata, lisa ja uuenda oma sadama kaikohti",
     "addNew": "Lisa Uus Kaikoht",
     "allBerths": "Kõik Kaikohad",
     "description": "kaikohta kõigis rajatistes. Muutmiseks kliki redigeeri.",
@@ -176,7 +176,12 @@
     "berthsTotal": "kaikohta kokku",
     "lengthLabel": "Pikkus",
     "draftLabel": "Süvis",
-    "priceLabel": "Hind"
+    "priceLabel": "Hind",
+    "newBerthName": "Uus Kaikoht",
+    "berthAdded": "Kaikoht edukalt lisatud.",
+    "berthUpdated": "Kaikoht edukalt uuendatud.",
+    "berthDeleted": "Kaikoht kustutatud.",
+    "deleteConfirm": "Kas oled kindel, et soovid selle kaikoha kustutada? Seda toimingut ei saa tagasi võtta."
   },
   "BookingsPage": {
     "title": "Broneeringud",
@@ -248,6 +253,12 @@
     "changePassword": "Muuda Salasõna",
     "changePasswordDesc": "Uuenda oma salasõna regulaarselt",
     "update": "Uuenda",
+    "cancel": "Tühista",
+    "newPassword": "Uus Salasõna",
+    "confirmPassword": "Kinnita Salasõna",
+    "updatePassword": "Uuenda Salasõna",
+    "updating": "Uuendamine...",
+    "passwordUpdatedSuccess": "Salasõna edukalt uuendatud.",
     "twoFactor": "Kaheastmeline Autentimine",
     "twoFactorDesc": "Lisa täiendav turvakiht",
     "enable": "Luba",

@@ -9,6 +9,7 @@ export interface PublicPort {
   location: string;
   description: string | null;
   contact_email: string;
+  coordinates: string | null;
   berths: PublicBerth[];
 }
 
@@ -40,7 +41,7 @@ export function usePublicPortsAndBerths() {
       // Fetch ports
       const { data: ports, error: portsError } = await supabase
         .from('ports')
-        .select('id, name, location, description, contact_email')
+        .select('id, name, location, description, contact_email, coordinates')
         .order('name');
 
       if (portsError) throw new Error(portsError.message);

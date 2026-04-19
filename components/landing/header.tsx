@@ -20,7 +20,6 @@ export function Header() {
   const t = useTranslations("Header")
 
   const navLinks = [
-    { label: t("berths"), href: "#berths" },
     { label: t("services"), href: "#services" },
     { label: t("about"), href: "#about" },
   ]

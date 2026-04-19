@@ -6,10 +6,12 @@ import { Anchor, ArrowLeft, Eye, EyeOff, UserPlus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
+import { FormError } from "@/components/ui/form-error"
 import { createClient } from "@/lib/supabase/client"
 import { toast } from "sonner"
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher"
 import { useTranslations } from "next-intl"
+import { validateSignupForm } from "@/lib/validations"
 
 export default function SignUpPage() {
   const [showPassword, setShowPassword] = useState(false)
@@ -18,31 +20,38 @@ export default function SignUpPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const router = useRouter()
   const t = useTranslations("SignUp")
+
+  const clearError = (field: string) => {
+    setFieldErrors(prev => {
+      const next = { ...prev }
+      delete next[field]
+      return next
+    })
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (password !== confirmPassword) {
-      toast.error(t("mismatch"))
+    // Client-side validation
+    const { valid, errors } = validateSignupForm(name, email, password, confirmPassword)
+    if (!valid) {
+      setFieldErrors(errors)
       return
     }
 
-    if (password.length < 8) {
-      toast.error(t("weakPassword"))
-      return
-    }
-
+    setFieldErrors({})
     setIsLoading(true)
 
     const supabase = createClient()
     const { error } = await supabase.auth.signUp({
-      email,
+      email: email.trim(),
       password,
       options: {
         data: {
-          full_name: name,
+          full_name: name.trim(),
         },
       },
     })
@@ -109,7 +118,7 @@ export default function SignUpPage() {
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} noValidate className="space-y-5">
               <FieldGroup>
                 <Field>
                   <FieldLabel htmlFor="name" className="text-white/70 text-sm">
@@ -119,11 +128,12 @@ export default function SignUpPage() {
                     id="name"
                     type="text"
                     value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={(e) => { setName(e.target.value); clearError("name"); }}
                     placeholder={t("namePlaceholder")}
-                    required
-                    className="h-11 bg-white/[0.05] border-white/10 text-white placeholder:text-white/30 focus:border-cyan focus:ring-cyan/20"
+                    className={`h-11 bg-white/[0.05] border-white/10 text-white placeholder:text-white/30 focus:border-cyan focus:ring-cyan/20 ${fieldErrors.name ? "border-rose-500/50" : ""}`}
+                    aria-invalid={!!fieldErrors.name}
                   />
+                  <FormError message={fieldErrors.name} />
                 </Field>
 
                 <Field>
@@ -134,11 +144,12 @@ export default function SignUpPage() {
                     id="email"
                     type="email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => { setEmail(e.target.value); clearError("email"); }}
                     placeholder={t("emailPlaceholder")}
-                    required
-                    className="h-11 bg-white/[0.05] border-white/10 text-white placeholder:text-white/30 focus:border-cyan focus:ring-cyan/20"
+                    className={`h-11 bg-white/[0.05] border-white/10 text-white placeholder:text-white/30 focus:border-cyan focus:ring-cyan/20 ${fieldErrors.email ? "border-rose-500/50" : ""}`}
+                    aria-invalid={!!fieldErrors.email}
                   />
+                  <FormError message={fieldErrors.email} />
                 </Field>
 
                 <Field>
@@ -150,10 +161,10 @@ export default function SignUpPage() {
                       id="password"
                       type={showPassword ? "text" : "password"}
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={(e) => { setPassword(e.target.value); clearError("password"); }}
                       placeholder={t("passwordPlaceholder")}
-                      required
-                      className="h-11 pr-10 bg-white/[0.05] border-white/10 text-white placeholder:text-white/30 focus:border-cyan focus:ring-cyan/20"
+                      className={`h-11 pr-10 bg-white/[0.05] border-white/10 text-white placeholder:text-white/30 focus:border-cyan focus:ring-cyan/20 ${fieldErrors.password ? "border-rose-500/50" : ""}`}
+                      aria-invalid={!!fieldErrors.password}
                     />
                     <button
                       type="button"
@@ -167,6 +178,7 @@ export default function SignUpPage() {
                       )}
                     </button>
                   </div>
+                  <FormError message={fieldErrors.password} />
                 </Field>
 
                 <Field>
@@ -177,11 +189,12 @@ export default function SignUpPage() {
                     id="confirmPassword"
                     type="password"
                     value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    onChange={(e) => { setConfirmPassword(e.target.value); clearError("confirmPassword"); }}
                     placeholder={t("confirmPlaceholder")}
-                    required
-                    className="h-11 bg-white/[0.05] border-white/10 text-white placeholder:text-white/30 focus:border-cyan focus:ring-cyan/20"
+                    className={`h-11 bg-white/[0.05] border-white/10 text-white placeholder:text-white/30 focus:border-cyan focus:ring-cyan/20 ${fieldErrors.confirmPassword ? "border-rose-500/50" : ""}`}
+                    aria-invalid={!!fieldErrors.confirmPassword}
                   />
+                  <FormError message={fieldErrors.confirmPassword} />
                 </Field>
               </FieldGroup>
 

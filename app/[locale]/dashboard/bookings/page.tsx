@@ -11,7 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Calendar, Plus, Filter, MoreHorizontal, Eye, Pencil, Trash2 } from "lucide-react"
+import { Calendar, MoreHorizontal, Eye, Pencil, Trash2 } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -73,16 +73,6 @@ export default function BookingsPage() {
           <p className="text-muted-foreground mt-1">
             {t("subtitle")}
           </p>
-        </div>
-        <div className="flex items-center gap-2 sm:gap-3">
-          <Button variant="outline" size="sm" className="border-border/50 hover:bg-muted/50">
-            <Filter className="w-4 h-4 mr-2" />
-            {t("filter")}
-          </Button>
-          <Button className="bg-navy hover:bg-navy-light text-white shadow-md shadow-navy/20 transition-all duration-300 hover:-translate-y-0.5" size="sm">
-            <Plus className="w-4 h-4 mr-2" />
-            {t("newBooking")}
-          </Button>
         </div>
       </div>
 

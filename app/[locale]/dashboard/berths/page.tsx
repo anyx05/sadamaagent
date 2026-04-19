@@ -23,6 +23,8 @@ import {
 import { Ship, Plus, Pencil, Trash2, Check, X } from "lucide-react"
 import { useBerths, useAddBerth, useUpdateBerth, useDeleteBerth, type Berth, type BerthStatus } from "@/lib/queries/berths"
 import { useTranslations } from "next-intl"
+import { toast } from "sonner"
+import { validateBerthForm } from "@/lib/validations"
 
 export default function BerthsPage() {
   const { data: berths = [], isLoading } = useBerths()
@@ -61,22 +63,49 @@ export default function BerthsPage() {
 
   const saveEdit = () => {
     if (!editForm) return
-    updateBerthMutation(editForm)
+    
+    // Validate form before saving
+    const validation = validateBerthForm(
+      editForm.name,
+      editForm.length,
+      editForm.draft,
+      editForm.price,
+      t
+    )
+    
+    if (!validation.valid) {
+      // Display the first validation error as a toast
+      const firstError = Object.values(validation.errors)[0]
+      toast.error(firstError)
+      return
+    }
+    
+    updateBerthMutation(editForm, {
+      onSuccess: () => toast.success(t("berthUpdated")),
+      onError: (err) => toast.error(err.message),
+    })
     setEditingId(null)
     setEditForm(null)
   }
 
   const deleteBerth = (id: string) => {
-    deleteBerthMutation(id)
+    if (!confirm(t("deleteConfirm"))) return
+    deleteBerthMutation(id, {
+      onSuccess: () => toast.success(t("berthDeleted")),
+      onError: (err) => toast.error(err.message),
+    })
   }
 
   const addBerth = () => {
     addBerthMutation({
-      name: `New Berth`,
+      name: t("newBerthName"),
       length: 10,
       draft: 2.0,
       price: 50,
       status: "available",
+    }, {
+      onSuccess: () => toast.success(t("berthAdded")),
+      onError: (err) => toast.error(err.message),
     })
   }
 

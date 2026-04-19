@@ -39,6 +39,17 @@ export function ChatWidget({ isOpen, onToggle }: ChatWidgetProps) {
     scrollToBottom()
   }, [messages])
 
+  useEffect(() => {
+    const handleOpenChat = (e: Event) => {
+      const customEvent = e as CustomEvent
+      if (customEvent.detail?.prompt) {
+        setMessage(customEvent.detail.prompt)
+      }
+    }
+    window.addEventListener("open-chat", handleOpenChat)
+    return () => window.removeEventListener("open-chat", handleOpenChat)
+  }, [])
+
   const handleSend = async () => {
     if (!message.trim()) return
     
@@ -60,7 +71,7 @@ export function ChatWidget({ isOpen, onToggle }: ChatWidgetProps) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${publishableKey}`
+          "apikey": publishableKey
         },
         body: JSON.stringify({
           messages: [...messages, userMsg].map(m => ({ role: m.role, content: m.content })),
