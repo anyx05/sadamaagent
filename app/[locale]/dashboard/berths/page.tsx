@@ -184,6 +184,8 @@ export default function BerthsPage() {
                         {isEditing ? (
                           <Input
                             type="number"
+                            min="0.1"
+                            step="0.1"
                             value={editForm?.length || 0}
                             onChange={(e) => setEditForm(prev => prev ? { ...prev, length: parseFloat(e.target.value) || 0 } : null)}
                             className="h-8 w-20 ml-auto bg-background/50 text-right"
@@ -196,6 +198,7 @@ export default function BerthsPage() {
                         {isEditing ? (
                           <Input
                             type="number"
+                            min="0.1"
                             step="0.1"
                             value={editForm?.draft || 0}
                             onChange={(e) => setEditForm(prev => prev ? { ...prev, draft: parseFloat(e.target.value) || 0 } : null)}
@@ -209,6 +212,8 @@ export default function BerthsPage() {
                         {isEditing ? (
                           <Input
                             type="number"
+                            min="0"
+                            step="0.01"
                             value={editForm?.price || 0}
                             onChange={(e) => setEditForm(prev => prev ? { ...prev, price: parseFloat(e.target.value) || 0 } : null)}
                             className="h-8 w-24 ml-auto bg-background/50 text-right"
