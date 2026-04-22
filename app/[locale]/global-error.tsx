@@ -2,144 +2,117 @@
 
 export default function GlobalError({
   error,
+  reset,
 }: {
   error: Error & { digest?: string }
+  reset: () => void
 }) {
-  const pathname = typeof window !== 'undefined' ? window.location.pathname : ''
-
-  // Log the error to the console so it will be forwarded to server logs and captured by auto-fix
-  console.error(error)
-
   return (
     <html>
       <head>
         <style>{`
-          * { box-sizing: border-box; }
+          * { box-sizing: border-box; margin: 0; padding: 0; }
           body {
-            margin: 0;
-            font-family: ui-monospace, monospace;
-            padding: 2rem;
-            background: #fafafa;
-            color: #171717;
-            font-size: 14px;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
             min-height: 100vh;
-            display: flex;
-            align-items: flex-start;
-          }
-          .error-container {
-            width: 100%;
-            max-width: 560px;
-            min-width: 0;
-          }
-          .error-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-          }
-          .error-icon {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #fef2f2;
-            color: #b91c1c;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 600;
-            font-size: 12px;
-            flex-shrink: 0;
+            background: linear-gradient(180deg, #0a1628 0%, #050d18 100%);
+            color: #e2e8f0;
+            padding: 1.5rem;
           }
-          .error-message {
-            margin: 0;
-            font-weight: 500;
-            line-height: 1.5;
+          .error-container {
+            text-align: center;
+            max-width: 420px;
+            width: 100%;
           }
-          .error-message code {
-            background: #e5e5e5;
-            padding: 0.1em 0.3em;
-          }
-          .error-summary {
-            margin: 0.25rem 0 0 2rem;
-            padding: 0;
-            font-size: 13px;
-            color: #b91c1c;
-            line-height: 1.5;
-          }
-          .error-details-wrapper {
-            margin: 1rem 0 0 2rem;
-          }
-          .error-details summary {
-            list-style: none;
-            cursor: pointer;
-            padding: 0;
-            color: #737373;
-            font-size: 12px;
-            user-select: none;
+          .error-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #06b6d4, #0891b2);
             display: flex;
             align-items: center;
-            gap: 6px;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 8px 24px rgba(6, 182, 212, 0.25);
           }
-          .error-details summary::-webkit-details-marker {
-            display: none;
+          .error-icon svg {
+            width: 32px;
+            height: 32px;
+            color: white;
           }
-          .error-details summary .chevron {
+          .error-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            letter-spacing: -0.025em;
+          }
+          .error-description {
+            font-size: 0.875rem;
+            color: rgba(226, 232, 240, 0.5);
+            line-height: 1.6;
+            margin-bottom: 2rem;
+          }
+          .error-actions {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+            flex-wrap: wrap;
+          }
+          .btn {
             display: inline-flex;
             align-items: center;
-            font-size: 0.6rem;
-            transition: transform 0.2s ease;
-            transform: rotate(-90deg);
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
           }
-          .error-details[open] summary .chevron {
-            transform: rotate(0deg);
+          .btn-primary {
+            background: #06b6d4;
+            color: #0a1628;
           }
-          .error-stack-slot {
-            height: 320px;
-            margin-top: 0.5rem;
+          .btn-primary:hover {
+            background: #22d3ee;
+            transform: translateY(-1px);
           }
-          .error-details-wrapper:not(:has(details[open])) .error-stack {
-            visibility: hidden;
+          .btn-outline {
+            background: rgba(255, 255, 255, 0.05);
+            color: #e2e8f0;
+            border: 1px solid rgba(255, 255, 255, 0.15);
           }
-          .error-stack {
-            margin: 0;
-            padding: 1rem;
-            background: #f5f5f5;
-            overflow: auto;
-            max-width: 100%;
-            min-width: 0;
-            height: 100%;
-            box-sizing: border-box;
-            font-size: 11px;
-            line-height: 1.5;
+          .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.25);
           }
         `}</style>
       </head>
       <body>
         <div className="error-container">
-          <div className="error-header">
-            <div className="error-icon">!</div>
-            <div>
-              <p className="error-message">
-                An application error has occurred while loading{' '}
-                <code>{pathname || '/'}</code>
-              </p>
-            </div>
+          <div className="error-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 8v4M12 16h.01"/>
+            </svg>
           </div>
-          <div className="error-summary">
-            {error.message || 'Unknown error'}
+          <h1 className="error-title">Something went wrong</h1>
+          <p className="error-description">
+            An unexpected error occurred. Our team has been notified. Please try reloading the page.
+          </p>
+          <div className="error-actions">
+            <button className="btn btn-primary" onClick={() => reset()}>
+              Reload Page
+            </button>
+            <a href="/" className="btn btn-outline">
+              Go Home
+            </a>
           </div>
-          {error.stack && (
-            <div className="error-details-wrapper">
-              <details className="error-details">
-                <summary>
-                  <span className="chevron">▼</span>
-                  View full error trace
-                </summary>
-              </details>
-              <div className="error-stack-slot">
-                <pre className="error-stack">{error.stack}</pre>
-              </div>
-            </div>
-          )}
         </div>
       </body>
     </html>

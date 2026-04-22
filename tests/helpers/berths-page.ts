@@ -59,12 +59,12 @@ export class BerthsPage extends BasePage {
   async deleteBerth(name: string) {
     const row = await this.getBerthRowByName(name)
     
-    // Listen for dialog to auto-accept it
-    this.page.once('dialog', async dialog => {
-      await dialog.accept()
-    })
-    
-    // Click delete trash icon
+    // Click delete trash icon to open the AlertDialog
     await row.locator('.lucide-trash-2').click()
+    
+    // Wait for the AlertDialog to appear and click the destructive confirm button
+    const dialog = this.page.locator('[data-testid="delete-berth-dialog"]')
+    await dialog.waitFor({ state: 'visible' })
+    await dialog.locator('button').filter({ hasText: /delete|kustuta/i }).click()
   }
 }

@@ -35,11 +35,15 @@ export function DashboardSidebar({ collapsed, onToggle, mobileOpen, onMobileClos
 
   useEffect(() => {
     const loadUser = async () => {
-      const supabase = createClient()
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
-        setUserName(user.user_metadata?.full_name || user.email?.split('@')[0] || "User")
-        setUserEmail(user.email || "")
+      try {
+        const supabase = createClient()
+        const { data: { user }, error } = await supabase.auth.getUser()
+        if (user && !error) {
+          setUserName(user.user_metadata?.full_name || user.email?.split('@')[0] || "User")
+          setUserEmail(user.email || "")
+        }
+      } catch {
+        // Sidebar auth load failed silently
       }
     }
     loadUser()
@@ -273,12 +277,12 @@ function SignOutButton({ collapsed, onNavigate, label, signingOutLabel, signOutS
     try {
       const supabase = createClient()
       await supabase.auth.signOut()
-      onNavigate?.()
       toast.success(signOutSuccessLabel)
+    } catch {
+      // Sign out may fail locally but we still redirect
+    } finally {
+      onNavigate?.()
       router.push("/login")
-    } catch (error) {
-      toast.error(signOutErrorLabel)
-      setIsSigningOut(false)
     }
   }
 

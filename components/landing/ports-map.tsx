@@ -1,97 +1,82 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { MapContainer, TileLayer, useMap } from "react-leaflet"
+import { useEffect, useState, useMemo } from "react"
+import { MapContainer, TileLayer, ZoomControl, useMap } from "react-leaflet"
+import L from "leaflet"
 import "leaflet/dist/leaflet.css"
 import { PortMarker } from "./port-marker"
 
-// Types matching the DB schema we expect
 export interface MapPort {
   id: string
   name: string
   description: string | null
   coordinates: string | null
-  berths: any[] // Just grabbing length for the map
+  berths: any[]
 }
 
 interface PortsMapProps {
   ports: MapPort[]
 }
 
-// Component to dynamically set map center based on Geolocation
-function MapController({ center }: { center: [number, number] }) {
+const ESTONIA_CENTER: [number, number] = [58.5953, 25.0136]
+const DEFAULT_ZOOM = 7
+
+function FitBounds({ coords }: { coords: [number, number][] }) {
   const map = useMap()
   useEffect(() => {
-    map.setView(center, map.getZoom())
-  }, [center, map])
+    if (coords.length === 0) return
+    if (coords.length === 1) {
+      map.setView(coords[0], 10)
+      return
+    }
+    const bounds = L.latLngBounds(coords)
+    map.fitBounds(bounds, { padding: [50, 50], maxZoom: 12 })
+  }, [coords, map])
   return null
 }
 
-const ESTONIA_CENTER: [number, number] = [58.5953, 25.0136]
-
 export default function PortsMap({ ports }: PortsMapProps) {
-  const [center, setCenter] = useState<[number, number]>(ESTONIA_CENTER)
-  const [zoom, setZoom] = useState(7)
-  const [locationFound, setLocationFound] = useState(false)
+  const validPorts = useMemo(() => {
+    return ports
+      .filter((p) => p.coordinates)
+      .map((p) => {
+        const [latStr, lngStr] = p.coordinates!.split(",")
+        const lat = parseFloat(latStr)
+        const lng = parseFloat(lngStr)
+        if (isNaN(lat) || isNaN(lng)) return null
+        return { ...p, coords: [lat, lng] as [number, number] }
+      })
+      .filter(Boolean) as (MapPort & { coords: [number, number] })[]
+  }, [ports])
 
-  useEffect(() => {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          // Check if within rough bounding box of Europe to avoid zooming to somewhere irrelevant
-          const lat = position.coords.latitude
-          const lng = position.coords.longitude
-          if (lat > 35 && lat < 72 && lng > -10 && lng < 40) {
-            setCenter([lat, lng])
-            setZoom(8)
-            setLocationFound(true)
-          }
-        },
-        (error) => {
-          console.log("Geolocation error or denied:", error.message)
-        },
-        { timeout: 5000 }
-      )
-    }
-  }, [])
+  const allCoords = useMemo(() => validPorts.map((p) => p.coords), [validPorts])
 
   return (
     <div className="w-full h-full min-h-[500px] rounded-xl overflow-hidden border border-white/5 relative z-10">
       <MapContainer
-        center={center}
-        zoom={zoom}
+        center={ESTONIA_CENTER}
+        zoom={DEFAULT_ZOOM}
         scrollWheelZoom={false}
+        zoomControl={false}
         className="w-full h-full z-0"
       >
-        {locationFound && <MapController center={center} />}
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          className="dark-map-tiles"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attributions">CARTO</a>'
+          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
         />
-        
-        {ports.map((port) => {
-          if (!port.coordinates) return null
-          const [latStr, lngStr] = port.coordinates.split(",")
-          const lat = parseFloat(latStr)
-          const lng = parseFloat(lngStr)
-          if (isNaN(lat) || isNaN(lng)) return null
+        <ZoomControl position="bottomright" />
+        <FitBounds coords={allCoords} />
 
-          // Ensure it's treated as an array of numbers
-          const coords: [number, number] = [lat, lng]
-          const totalBerths = port.berths?.length || 0
-
-          return (
-            <PortMarker
-              key={port.id}
-              id={port.id}
-              name={port.name}
-              description={port.description}
-              coordinates={coords}
-              totalBerths={totalBerths}
-            />
-          )
-        })}
+        {validPorts.map((port) => (
+          <PortMarker
+            key={port.id}
+            id={port.id}
+            name={port.name}
+            description={port.description}
+            coordinates={port.coords}
+            totalBerths={port.berths?.length || 0}
+          />
+        ))}
       </MapContainer>
     </div>
   )

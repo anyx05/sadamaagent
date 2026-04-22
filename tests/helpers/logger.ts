@@ -48,6 +48,15 @@ class CustomLogger {
     })
   }
 
+  log(category: string, message: string) {
+    this.appendLog({
+      timestamp: new Date().toISOString(),
+      testName: category,
+      status: 'START',
+      details: message
+    })
+  }
+
   pass(testName: string) {
     this.appendLog({
       timestamp: new Date().toISOString(),

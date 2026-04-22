@@ -20,17 +20,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Ship, Plus, Pencil, Trash2, Check, X } from "lucide-react"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { Ship, Plus, Pencil, Trash2, Check, X, Anchor, AlertTriangle } from "lucide-react"
 import { useBerths, useAddBerth, useUpdateBerth, useDeleteBerth, type Berth, type BerthStatus } from "@/lib/queries/berths"
 import { useTranslations } from "next-intl"
 import { toast } from "sonner"
 import { validateBerthForm } from "@/lib/validations"
 
 export default function BerthsPage() {
-  const { data: berths = [], isLoading } = useBerths()
+  const { data: berths = [], isLoading, error } = useBerths()
   const { mutate: addBerthMutation, isPending: isAdding } = useAddBerth()
   const { mutate: updateBerthMutation } = useUpdateBerth()
   const { mutate: deleteBerthMutation } = useDeleteBerth()
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
   const t = useTranslations("BerthManager")
 
   const statusConfig: Record<BerthStatus, { label: string, className: string }> = {
@@ -88,11 +99,17 @@ export default function BerthsPage() {
     setEditForm(null)
   }
 
-  const deleteBerth = (id: string) => {
-    if (!confirm(t("deleteConfirm"))) return
-    deleteBerthMutation(id, {
-      onSuccess: () => toast.success(t("berthDeleted")),
-      onError: (err) => toast.error(err.message),
+  const handleDeleteConfirm = () => {
+    if (!deleteTarget) return
+    deleteBerthMutation(deleteTarget, {
+      onSuccess: () => {
+        toast.success(t("berthDeleted"))
+        setDeleteTarget(null)
+      },
+      onError: (err) => {
+        toast.error(err.message)
+        setDeleteTarget(null)
+      },
     })
   }
 
@@ -146,6 +163,24 @@ export default function BerthsPage() {
           </div>
         </CardHeader>
         <CardContent className="px-0 pb-0">
+          {error ? (
+            <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
+              <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-destructive/10 text-destructive mb-4">
+                <AlertTriangle className="w-6 h-6" />
+              </div>
+              <p className="text-sm font-medium text-foreground mb-1">{t("errorTitle")}</p>
+              <p className="text-xs text-muted-foreground max-w-sm">{t("errorDescription")}</p>
+            </div>
+          ) : berths.length === 0 && !isLoading ? (
+            <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
+              <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-muted text-muted-foreground mb-4">
+                <Anchor className="w-6 h-6" />
+              </div>
+              <p className="text-sm font-medium text-foreground mb-1">{t("emptyTitle")}</p>
+              <p className="text-xs text-muted-foreground max-w-sm">{t("emptyDescription")}</p>
+            </div>
+          ) : (
+          <>
           {/* Desktop Table */}
           <div className="hidden sm:block overflow-x-auto">
             <Table>
@@ -172,6 +207,7 @@ export default function BerthsPage() {
                       <TableCell className="pl-6">
                         {isEditing ? (
                           <Input
+                            type="text"
                             value={editForm?.name || ""}
                             onChange={(e) => setEditForm(prev => prev ? { ...prev, name: e.target.value } : null)}
                             className="h-8 w-full bg-background/50"
@@ -276,7 +312,7 @@ export default function BerthsPage() {
                             <Button
                               variant="ghost"
                               size="icon"
-                              onClick={() => deleteBerth(berth.id)}
+                              onClick={() => setDeleteTarget(berth.id)}
                               className="h-8 w-8 text-muted-foreground hover:text-destructive"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -316,7 +352,7 @@ export default function BerthsPage() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => deleteBerth(berth.id)}
+                        onClick={() => setDeleteTarget(berth.id)}
                         className="h-8 w-8 text-destructive"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -362,8 +398,31 @@ export default function BerthsPage() {
               </div>
             </div>
           </div>
+          </>
+          )}
         </CardContent>
       </Card>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+        <AlertDialogContent data-testid="delete-berth-dialog">
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("deleteTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("deleteDescription")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t("cancelAction")}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {t("deleteAction")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

@@ -122,3 +122,31 @@ export function validateBerthForm(
   
   return { valid: Object.keys(errors).length === 0, errors };
 }
+
+// ── Agent Settings ───────────────────────────────────────────────
+
+const SUPPORTED_LANGUAGES = ["en", "et", "ru", "fi", "sv", "de"];
+
+export function validateAgentSettings(
+  systemPrompt: string,
+  language: string
+): ValidationResult {
+  const errors: Record<string, string> = {};
+
+  if (systemPrompt.length > 2000) {
+    errors.systemPrompt = "System prompt must be under 2000 characters.";
+  }
+
+  if (!SUPPORTED_LANGUAGES.includes(language)) {
+    errors.language = "Please select a supported language.";
+  }
+
+  return { valid: Object.keys(errors).length === 0, errors };
+}
+
+// ── Booking Cancellation ─────────────────────────────────────────
+
+export function validateBookingCancellation(currentStatus: string): string | null {
+  if (currentStatus === "cancelled") return "This booking has already been cancelled.";
+  return null;
+}

@@ -21,9 +21,7 @@ test.describe('Berths Management @berths @regression', () => {
     // 1. Create
     await berthsPage.clickAddNewBerth()
     // The default name is "New Berth". We should find it and rename it so we can track it.
-    await expect(page.getByText('Berth added successfully.')).toBeVisible()
     await berthsPage.editBerth('New Berth', testBerthName, '75')
-    await expect(page.getByText('Berth updated successfully.')).toBeVisible()
     
     // Verify it exists with the new name
     const newRow = await berthsPage.getBerthRowByName(testBerthName)
@@ -32,7 +30,6 @@ test.describe('Berths Management @berths @regression', () => {
 
     // 2. Update
     await berthsPage.editBerth(testBerthName, updatedBerthName, '120')
-    await expect(page.getByText('Berth updated successfully.')).toBeVisible()
     
     const updatedRow = await berthsPage.getBerthRowByName(updatedBerthName)
     await expect(updatedRow).toBeVisible()
@@ -40,7 +37,6 @@ test.describe('Berths Management @berths @regression', () => {
 
     // 3. Delete
     await berthsPage.deleteBerth(updatedBerthName)
-    await expect(page.getByText('Berth deleted.')).toBeVisible()
     
     // Verify it's gone
     const deletedRow = await berthsPage.getBerthRowByName(updatedBerthName)

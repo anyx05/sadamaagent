@@ -181,7 +181,15 @@
     "berthAdded": "Kaikoht edukalt lisatud.",
     "berthUpdated": "Kaikoht edukalt uuendatud.",
     "berthDeleted": "Kaikoht kustutatud.",
-    "deleteConfirm": "Kas oled kindel, et soovid selle kaikoha kustutada? Seda toimingut ei saa tagasi võtta."
+    "deleteConfirm": "Kas oled kindel, et soovid selle kaikoha kustutada? Seda toimingut ei saa tagasi võtta.",
+    "deleteTitle": "Kustuta Kaikoht",
+    "deleteDescription": "See kustutab jäädavalt selle kaikoha ja kõik seotud andmed. Seda toimingut ei saa tagasi võtta.",
+    "deleteAction": "Kustuta",
+    "cancelAction": "Tühista",
+    "emptyTitle": "Kaikohti veel pole",
+    "emptyDescription": "Alusta oma esimese kaikoha lisamisest sadamasse.",
+    "errorTitle": "Kaikohtade laadimine ebaõnnestus",
+    "errorDescription": "Me ei suutnud sinu kaikohtade andmeid laadida. Palun proovi uuesti."
   },
   "BookingsPage": {
     "title": "Broneeringud",
@@ -203,7 +211,16 @@
     "viewDetails": "Vaata Detaile",
     "editBooking": "Muuda Broneeringut",
     "cancel": "Tühista",
-    "showing": "Kuvatakse"
+    "showing": "Kuvatakse",
+    "cancelTitle": "Tühista Broneering",
+    "cancelDescription": "Kas oled kindel, et soovid selle broneeringu tühistada? Klienti teavitatakse.",
+    "cancelAction": "Tühista Broneering",
+    "cancelKeep": "Jäta Broneering",
+    "emptyTitle": "Broneeringuid veel pole",
+    "emptyDescription": "Broneeringud ilmuvad siia kui kliendid broneerivad kaikohti sinu sadamas.",
+    "errorTitle": "Broneeringute laadimine ebaõnnestus",
+    "errorDescription": "Me ei suutnud sinu broneeringute andmeid laadida. Palun proovi uuesti.",
+    "alreadyCancelled": "See broneering on juba tühistatud."
   },
   "SettingsPage": {
     "title": "Agendi Seaded",
@@ -268,7 +285,10 @@
     "dangerZone": "Ohtlik Tsoon",
     "dangerDesc": "Pöördumatud ja hävitavad tegevused",
     "deleteAccount": "Kustuta Konto",
-    "deleteAccountDesc": "Kustuta jäädavalt oma konto ja kõik seotud andmed"
+    "deleteAccountDesc": "Kustuta jäädavalt oma konto ja kõik seotud andmed",
+    "profileSaved": "Profiil edukalt uuendatud.",
+    "profileSaveError": "Profiili uuendamine ebaõnnestus.",
+    "promptTooLong": "Süsteemi viip peab olema alla 2000 tähemärgi."
   },
   "FeaturedPorts": {
     "title": "Meie Sadamad ja Marinid",
@@ -278,5 +298,18 @@
     "viewBerths": "Vaata Vabu Kaikohti",
     "empty": "Hetkel pole sadamaid saadaval.",
     "error": "Viga sadamate laadimisel:"
+  },
+  "NotFound": {
+    "title": "404",
+    "heading": "See leht on kursilt kõrvale kaldunud",
+    "description": "Otsitavat lehte ei eksisteeri või see on teisaldatud. Aitame sind õigele teele tagasi.",
+    "dashboardLink": "Mine Töölauale",
+    "homeLink": "Tagasi Avalehele"
+  },
+  "GlobalError": {
+    "title": "Midagi läks valesti",
+    "description": "Ilmnes ootamatu viga. Meie meeskonda on teavitatud. Palun proovi lehte uuesti laadida.",
+    "reload": "Laadi Leht Uuesti",
+    "home": "Mine Avalehele"
   }
 }

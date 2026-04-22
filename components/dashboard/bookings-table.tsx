@@ -15,13 +15,6 @@ const statusStyles: Record<string, string> = {
   cancelled: "bg-rose-500/10 text-rose-600 border-rose-500/20",
 }
 
-const statusLabels: Record<string, string> = {
-  confirmed: "Confirmed",
-  pending: "Pending",
-  "in-progress": "In Progress",
-  cancelled: "Cancelled",
-}
-
 export function BookingsTable() {
   const { data: bookings = [], isLoading } = useBookings()
   const t = useTranslations("RecentBookings")

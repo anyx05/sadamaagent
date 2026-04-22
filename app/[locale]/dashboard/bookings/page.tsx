@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -11,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Calendar, MoreHorizontal, Eye, Pencil, Trash2 } from "lucide-react"
+import { Calendar, MoreHorizontal, Eye, Pencil, Trash2, AlertTriangle } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,6 +20,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 import { useBookings, useCancelBooking } from "@/lib/queries/bookings"
 import { useTranslations } from "next-intl"
@@ -34,14 +45,28 @@ function formatDate(dateStr: string) {
 }
 
 export default function BookingsPage() {
-  const { data: bookings = [], isLoading } = useBookings()
+  const { data: bookings = [], isLoading, error } = useBookings()
   const cancelBooking = useCancelBooking()
   const t = useTranslations("BookingsPage")
+  const [cancelTarget, setCancelTarget] = useState<{ id: string; name: string } | null>(null)
 
-  const handleCancel = (bookingId: string, customerName: string) => {
-    cancelBooking.mutate(bookingId, {
-      onSuccess: () => toast.success(`Booking for ${customerName} cancelled.`),
-      onError: (err) => toast.error(`Failed to cancel: ${err.message}`),
+  const handleCancelConfirm = () => {
+    if (!cancelTarget) return
+    const booking = bookings.find(b => b.id === cancelTarget.id)
+    if (booking?.status === "cancelled") {
+      toast.error(t("alreadyCancelled"))
+      setCancelTarget(null)
+      return
+    }
+    cancelBooking.mutate(cancelTarget.id, {
+      onSuccess: () => {
+        toast.success(`Booking for ${cancelTarget.name} cancelled.`)
+        setCancelTarget(null)
+      },
+      onError: (err) => {
+        toast.error(`Failed to cancel: ${err.message}`)
+        setCancelTarget(null)
+      },
     })
   }
 
@@ -109,6 +134,24 @@ export default function BookingsPage() {
           </div>
         </CardHeader>
         <CardContent className="px-0 pb-0">
+          {error ? (
+            <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
+              <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-destructive/10 text-destructive mb-4">
+                <AlertTriangle className="w-6 h-6" />
+              </div>
+              <p className="text-sm font-medium text-foreground mb-1">{t("errorTitle")}</p>
+              <p className="text-xs text-muted-foreground max-w-sm">{t("errorDescription")}</p>
+            </div>
+          ) : bookings.length === 0 && !isLoading ? (
+            <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
+              <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-muted text-muted-foreground mb-4">
+                <Calendar className="w-6 h-6" />
+              </div>
+              <p className="text-sm font-medium text-foreground mb-1">{t("emptyTitle")}</p>
+              <p className="text-xs text-muted-foreground max-w-sm">{t("emptyDescription")}</p>
+            </div>
+          ) : (
+          <>
           {/* Desktop Table */}
           <div className="hidden sm:block">
             <Table>
@@ -170,7 +213,7 @@ export default function BookingsPage() {
                             <DropdownMenuSeparator />
                             <DropdownMenuItem 
                               className="text-destructive focus:text-destructive"
-                              onClick={() => handleCancel(booking.id, booking.customerName)}
+                              onClick={() => setCancelTarget({ id: booking.id, name: booking.customerName })}
                             >
                               <Trash2 className="w-4 h-4 mr-2" />
                               {t("cancel")}
@@ -232,8 +275,31 @@ export default function BookingsPage() {
               ))}
             </div>
           </div>
+          </>
+          )}
         </CardContent>
       </Card>
+
+      {/* Cancel Booking Confirmation Dialog */}
+      <AlertDialog open={!!cancelTarget} onOpenChange={(open) => !open && setCancelTarget(null)}>
+        <AlertDialogContent data-testid="cancel-booking-dialog">
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("cancelTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("cancelDescription")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t("cancelKeep")}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleCancelConfirm}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {t("cancelAction")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

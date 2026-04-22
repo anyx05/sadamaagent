@@ -16,8 +16,8 @@ test.describe('Authentication Flows @auth @smoke', () => {
     await page.getByRole('button', { name: /sign in|authenticating/i }).click()
 
     await expect(page).toHaveURL(/\/en\/dashboard/)
-    // Verify toast or dashboard element
-    await expect(page.getByText('Successfully logged in.')).toBeVisible()
+    // Verify dashboard element
+    await expect(page.getByRole('heading', { name: /Dashboard/i })).toBeVisible()
   })
 
   test('should show error with invalid credentials', async ({ page }) => {
@@ -43,7 +43,7 @@ test.describe('Authentication Flows @auth @smoke', () => {
     await page.getByRole('button', { name: /sign out/i }).click()
 
     // Should redirect to login or landing page
-    await expect(page).toHaveURL(/\/en\/login|\/en/)
+    await expect(page).toHaveURL(/\/en\/login/)
     // Verify auth session is actually destroyed by trying to go to dashboard again
     await page.goto('/en/dashboard')
     await expect(page).toHaveURL(/\/en\/login/)

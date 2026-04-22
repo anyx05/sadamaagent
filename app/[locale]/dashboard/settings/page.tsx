@@ -21,7 +21,7 @@ import { useEffect } from "react"
 import { useAgentSettings, useUpdateAgentSettings } from "@/lib/queries/settings"
 import { toast } from "sonner"
 import { useTranslations } from "next-intl"
-import { validatePassword, validatePasswordConfirm } from "@/lib/validations"
+import { validatePassword, validatePasswordConfirm, validateAgentSettings } from "@/lib/validations"
 import { FormError } from "@/components/ui/form-error"
 import { createClient } from "@/lib/supabase/client"
 
@@ -44,6 +44,8 @@ export default function SettingsPage() {
   const [passwordError, setPasswordError] = useState("")
   const [confirmPasswordError, setConfirmPasswordError] = useState("")
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false)
+  const [isSavingProfile, setIsSavingProfile] = useState(false)
+  const [promptError, setPromptError] = useState("")
 
   useEffect(() => {
     if (settings) {
@@ -66,6 +68,12 @@ export default function SettingsPage() {
   }, [])
 
   const handleSaveSettings = () => {
+    setPromptError("")
+    const validation = validateAgentSettings(systemPrompt, language)
+    if (!validation.valid) {
+      if (validation.errors.systemPrompt) setPromptError(t("promptTooLong"))
+      return
+    }
     updateSettings({
       systemPrompt,
       language
@@ -77,6 +85,20 @@ export default function SettingsPage() {
         toast.error(t("saveError") + err.message)
       }
     })
+  }
+
+  const handleSaveProfile = async () => {
+    setIsSavingProfile(true)
+    const supabase = createClient()
+    const { error } = await supabase.auth.updateUser({
+      data: { full_name: profileName.trim() }
+    })
+    setIsSavingProfile(false)
+    if (error) {
+      toast.error(t("profileSaveError"))
+    } else {
+      toast.success(t("profileSaved"))
+    }
   }
 
   const [notifications, setNotifications] = useState({
@@ -174,6 +196,11 @@ export default function SettingsPage() {
               placeholder={t("systemPromptPlaceholder")}
               className="min-h-[180px] resize-y bg-white/[0.05] border-white/10 text-white placeholder:text-white/30 focus:border-cyan focus:ring-cyan/20 font-mono text-sm"
             />
+            {promptError && (
+              <p className="text-xs text-rose-400 mt-1.5 animate-in fade-in slide-in-from-top-1 duration-200" role="alert">
+                {promptError}
+              </p>
+            )}
             <p className="text-xs text-white/40">
               {t("systemPromptHelp")}
             </p>
@@ -326,8 +353,12 @@ export default function SettingsPage() {
             </Field>
           </FieldGroup>
           <div className="flex justify-end mt-6">
-            <Button className="bg-navy hover:bg-navy-light text-white">
-              {t("saveChanges")}
+            <Button 
+              className="bg-navy hover:bg-navy-light text-white"
+              onClick={handleSaveProfile}
+              disabled={isSavingProfile}
+            >
+              {isSavingProfile ? t("saving") : t("saveChanges")}
             </Button>
           </div>
         </CardContent>

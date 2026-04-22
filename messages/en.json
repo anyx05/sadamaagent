@@ -181,7 +181,15 @@
     "berthAdded": "Berth added successfully.",
     "berthUpdated": "Berth updated successfully.",
     "berthDeleted": "Berth deleted.",
-    "deleteConfirm": "Are you sure you want to delete this berth? This action cannot be undone."
+    "deleteConfirm": "Are you sure you want to delete this berth? This action cannot be undone.",
+    "deleteTitle": "Delete Berth",
+    "deleteDescription": "This will permanently remove this berth and all associated data. This action cannot be undone.",
+    "deleteAction": "Delete",
+    "cancelAction": "Cancel",
+    "emptyTitle": "No berths yet",
+    "emptyDescription": "Get started by adding your first berth to the marina.",
+    "errorTitle": "Failed to load berths",
+    "errorDescription": "We couldn't load your berth data. Please try again."
   },
   "BookingsPage": {
     "title": "Bookings",
@@ -203,7 +211,16 @@
     "viewDetails": "View Details",
     "editBooking": "Edit Booking",
     "cancel": "Cancel",
-    "showing": "Showing"
+    "showing": "Showing",
+    "cancelTitle": "Cancel Booking",
+    "cancelDescription": "Are you sure you want to cancel this booking? The customer will be notified.",
+    "cancelAction": "Cancel Booking",
+    "cancelKeep": "Keep Booking",
+    "emptyTitle": "No bookings yet",
+    "emptyDescription": "Bookings will appear here when customers reserve berths at your marina.",
+    "errorTitle": "Failed to load bookings",
+    "errorDescription": "We couldn't load your booking data. Please try again.",
+    "alreadyCancelled": "This booking has already been cancelled."
   },
   "SettingsPage": {
     "title": "Agent Settings",
@@ -268,7 +285,10 @@
     "dangerZone": "Danger Zone",
     "dangerDesc": "Irreversible and destructive actions",
     "deleteAccount": "Delete Account",
-    "deleteAccountDesc": "Permanently delete your account and all associated data"
+    "deleteAccountDesc": "Permanently delete your account and all associated data",
+    "profileSaved": "Profile updated successfully.",
+    "profileSaveError": "Failed to update profile.",
+    "promptTooLong": "System prompt must be under 2000 characters."
   },
   "FeaturedPorts": {
     "title": "Featured Ports & Marinas",
@@ -278,5 +298,18 @@
     "viewBerths": "View Available Berths",
     "empty": "No ports available at the moment.",
     "error": "Error loading ports:"
+  },
+  "NotFound": {
+    "title": "404",
+    "heading": "This page has drifted off course",
+    "description": "The page you're looking for doesn't exist or has been moved. Let's get you back on track.",
+    "dashboardLink": "Go to Dashboard",
+    "homeLink": "Back to Home"
+  },
+  "GlobalError": {
+    "title": "Something went wrong",
+    "description": "An unexpected error occurred. Our team has been notified. Please try reloading the page.",
+    "reload": "Reload Page",
+    "home": "Go Home"
   }
 }

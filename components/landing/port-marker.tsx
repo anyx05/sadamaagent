@@ -1,22 +1,23 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Marker, Popup } from "react-leaflet"
+import { Marker, Popup, Tooltip } from "react-leaflet"
 import L from "leaflet"
 import { Button } from "@/components/ui/button"
 import { Ship, Navigation } from "lucide-react"
 
-// Create the custom bolt-style icon (grey circle with thick dark border)
-const createBoltStyleIcon = () => {
+const createMarkerIcon = () => {
   return L.divIcon({
     className: "bg-transparent",
     html: `
-      <div class="relative flex items-center justify-center w-6 h-6 rounded-full bg-[#8b8b8b] border-[3px] border-[#1a1f2e] shadow-[0_2px_4px_rgba(0,0,0,0.5)] transition-transform hover:scale-110 cursor-pointer">
+      <div class="port-marker-dot">
+        <div class="port-marker-pulse"></div>
+        <div class="port-marker-core"></div>
       </div>
     `,
     iconSize: [24, 24],
     iconAnchor: [12, 12],
-    popupAnchor: [0, -12]
+    popupAnchor: [0, -14]
   })
 }
 
@@ -32,14 +33,13 @@ export function PortMarker({ id, name, description, coordinates, totalBerths }: 
   const [icon, setIcon] = useState<L.DivIcon | null>(null)
 
   useEffect(() => {
-    setIcon(createBoltStyleIcon())
+    setIcon(createMarkerIcon())
   }, [])
 
   if (!icon) return null
 
   const handleAskAI = (e: React.MouseEvent) => {
     e.stopPropagation()
-    // Dispatch a custom event that the ChatWidget will listen to
     window.dispatchEvent(
       new CustomEvent('open-chat', {
         detail: {
@@ -51,6 +51,13 @@ export function PortMarker({ id, name, description, coordinates, totalBerths }: 
 
   return (
     <Marker position={coordinates} icon={icon}>
+      <Tooltip
+        direction="top"
+        offset={[0, -14]}
+        className="port-tooltip"
+      >
+        {name}
+      </Tooltip>
       <Popup className="custom-popup min-w-[200px]">
         <div className="p-1 space-y-3">
           <div>

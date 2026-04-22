@@ -23,7 +23,7 @@ export default function DashboardError({
           {t("title")}
         </h2>
         <p className="text-sm text-muted-foreground max-w-md">
-          {error.message || t("description")}
+          {t("description")}
         </p>
       </div>
       <Button
