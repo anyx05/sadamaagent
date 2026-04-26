@@ -52,7 +52,7 @@ export default function BookingsPage() {
 
   const handleCancelConfirm = () => {
     if (!cancelTarget) return
-    const booking = bookings.find(b => b.id === cancelTarget.id)
+    const booking = bookings.find((b: any) => b.id === cancelTarget.id)
     if (booking?.status === "cancelled") {
       toast.error(t("alreadyCancelled"))
       setCancelTarget(null)
@@ -105,9 +105,9 @@ export default function BookingsPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {[
           { label: t("totalBookings"), value: bookings.length, color: "text-foreground" },
-          { label: t("confirmed"), value: bookings.filter(b => b.status === "confirmed").length, color: "text-emerald-600" },
-          { label: t("pending"), value: bookings.filter(b => b.status === "pending").length, color: "text-amber" },
-          { label: t("inProgress"), value: bookings.filter(b => b.status === "in-progress").length, color: "text-cyan" },
+          { label: t("confirmed"), value: bookings.filter((b: any) => b.status === "confirmed").length, color: "text-emerald-600" },
+          { label: t("pending"), value: bookings.filter((b: any) => b.status === "pending").length, color: "text-amber" },
+          { label: t("inProgress"), value: bookings.filter((b: any) => b.status === "in-progress").length, color: "text-cyan" },
         ].map((stat) => (
           <Card key={stat.label} className="bg-card/80 backdrop-blur-sm border-border/40">
             <CardContent className="p-4">
@@ -270,7 +270,7 @@ export default function BookingsPage() {
                     key === "confirmed" ? "bg-emerald-500" : 
                     key === "pending" ? "bg-amber" : "bg-cyan"
                   }`} />
-                  {bookings.filter(b => b.status === key).length} {config.label}
+                  {bookings.filter((b: any) => b.status === key).length} {config.label}
                 </div>
               ))}
             </div>

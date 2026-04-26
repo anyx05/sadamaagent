@@ -33,12 +33,12 @@ export function useDashboardStats() {
       if (berthsError) throw new Error(berthsError.message);
       
       const totalBerths = berths?.length ?? 0;
-      const availableBerths = berths?.filter(b => b.status === 'available').length ?? 0;
-      const occupiedBerths = berths?.filter(b => b.status === 'occupied').length ?? 0;
-      const maintenanceBerths = berths?.filter(b => b.status === 'maintenance').length ?? 0;
+      const availableBerths = (berths ?? []).filter((b: any) => b.status === 'available').length;
+      const occupiedBerths = (berths ?? []).filter((b: any) => b.status === 'occupied').length;
+      const maintenanceBerths = (berths ?? []).filter((b: any) => b.status === 'maintenance').length;
       
       // Fetch active bookings (confirmed, departure in the future)
-      const berthIds = berths?.map(b => b.id) ?? [];
+      const berthIds = (berths ?? []).map((b: any) => b.id);
       
       let activeBookings = 0;
       let weekBookings = 0;

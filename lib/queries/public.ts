@@ -56,11 +56,11 @@ export function usePublicPortsAndBerths() {
       if (berthsError) throw new Error(berthsError.message);
 
       // Group berths under their parent ports
-      const portsWithBerths: PublicPort[] = (ports ?? []).map(port => ({
+      const portsWithBerths: PublicPort[] = (ports ?? []).map((port: any) => ({
         ...port,
         berths: (berths ?? [])
-          .filter(b => b.port_id === port.id)
-          .map(b => ({
+          .filter((b: any) => b.port_id === port.id)
+          .map((b: any) => ({
             ...b,
             port_name: port.name,
             port_location: port.location,
@@ -68,8 +68,8 @@ export function usePublicPortsAndBerths() {
       }));
 
       // Flatten all berths with port context for the berths grid
-      const allBerths: PublicBerth[] = (berths ?? []).map(b => {
-        const port = (ports ?? []).find(p => p.id === b.port_id);
+      const allBerths: PublicBerth[] = (berths ?? []).map((b: any) => {
+        const port = (ports ?? []).find((p: any) => p.id === b.port_id);
         return {
           ...b,
           port_name: port?.name ?? 'Unknown Port',

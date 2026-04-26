@@ -53,7 +53,7 @@ export function useBerths() {
       if (error) throw new Error(error.message);
       
       // Map to UI expectations
-      return data.map(b => ({
+      return (data as any[]).map((b: any) => ({
         id: b.id,
         name: b.name,
         length: b.max_length_m,

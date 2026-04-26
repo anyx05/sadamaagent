@@ -74,7 +74,7 @@ export function ChatWidget({ isOpen, onToggle }: ChatWidgetProps) {
           "apikey": publishableKey
         },
         body: JSON.stringify({
-          messages: [...messages, userMsg].map(m => ({ role: m.role, content: m.content })),
+          messages: [...messages, userMsg].map((m: any) => ({ role: m.role, content: m.content })),
           sessionId: sessionId,
           locale: locale
         })
