@@ -25,7 +25,7 @@ export function HowItWorks() {
   ]
 
   return (
-    <section id="about" className="py-24 bg-background">
+    <section id="about" className="pt-24 pb-12 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-3xl font-bold text-foreground sm:text-4xl">
@@ -40,13 +40,15 @@ export function HowItWorks() {
           {steps.map((step, index) => (
             <div 
               key={index}
-              className="relative p-8 rounded-2xl bg-muted/30 border border-border/50 hover:bg-muted/50 transition-colors"
+              className="p-8 rounded-2xl bg-muted/30 border border-border/50 hover:bg-muted/50 hover:border-border hover:shadow-lg transition-all duration-300 group"
             >
-              <div className="w-12 h-12 rounded-xl bg-amber/20 text-amber flex items-center justify-center mb-6">
-                <step.icon className="w-6 h-6" />
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-12 h-12 shrink-0 rounded-xl bg-amber/10 text-amber flex items-center justify-center group-hover:bg-amber/20 group-hover:scale-110 transition-all duration-300">
+                  <step.icon className="w-5 h-5" />
+                </div>
+                <h3 className="text-xl font-semibold text-foreground">{step.title}</h3>
               </div>
-              <h3 className="text-xl font-semibold text-foreground mb-3">{step.title}</h3>
-              <p className="text-muted-foreground leading-relaxed">{step.description}</p>
+              <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">{step.description}</p>
             </div>
           ))}
         </div>

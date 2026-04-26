@@ -123,7 +123,7 @@ export function ChatWidget({ isOpen, onToggle }: ChatWidgetProps) {
       <motion.button
         onClick={onToggle}
         className={cn(
-          "fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex items-center justify-center w-14 h-14 rounded-2xl shadow-2xl transition-colors",
+          "fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[1100] flex items-center justify-center w-14 h-14 rounded-2xl shadow-2xl transition-colors",
           isOpen 
             ? "bg-slate text-white" 
             : "bg-gradient-to-br from-cyan to-cyan-dark text-white"
@@ -174,7 +174,7 @@ export function ChatWidget({ isOpen, onToggle }: ChatWidgetProps) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed bottom-20 sm:bottom-24 right-4 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-[calc(100vw-3rem)] max-w-md"
+            className="fixed bottom-20 sm:bottom-24 right-4 sm:right-6 z-[1100] w-[calc(100vw-2rem)] sm:w-[calc(100vw-3rem)] max-w-md"
           >
             <div className="flex flex-col h-[450px] sm:h-[500px] rounded-2xl border border-white/10 bg-navy/95 backdrop-blur-xl shadow-2xl shadow-black/30 overflow-hidden">
               {/* Header */}

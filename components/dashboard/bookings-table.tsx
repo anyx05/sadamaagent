@@ -10,9 +10,9 @@ import { useTranslations } from "next-intl"
 
 const statusStyles: Record<string, string> = {
   confirmed: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
-  pending: "bg-amber/10 text-amber border-amber/20",
-  "in-progress": "bg-navy/10 text-navy border-navy/20",
-  cancelled: "bg-rose-500/10 text-rose-600 border-rose-500/20",
+  pending: "bg-amber-500/15 text-amber-500 border-amber-500/25",
+  "in-progress": "bg-cyan/10 text-cyan border-cyan/20",
+  cancelled: "bg-rose-500/10 text-rose-500 border-rose-500/20",
 }
 
 export function BookingsTable() {
@@ -79,18 +79,20 @@ export function BookingsTable() {
                 {recentBookings.map((booking) => (
                   <tr
                     key={booking.id}
-                    className="hover:bg-secondary/50 transition-colors"
+                    className="group hover:bg-muted/40 transition-colors relative"
                   >
-                    <td className="py-4 px-4">
+                    <td className="py-4 px-4 relative">
+                      {/* Left accent on hover */}
+                      <span className="absolute left-0 top-2 bottom-2 w-0.5 rounded-full bg-blue-500/0 group-hover:bg-blue-500/50 transition-colors" />
                       <span className="text-sm font-medium text-foreground">
                         {booking.customerName}
                       </span>
                     </td>
                     <td className="py-4 px-4 hidden md:table-cell">
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-navy/10 text-navy">
-                          <Ship className="w-4 h-4" />
-                        </div>
+                        <div className="flex items-center gap-3">
+                          <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-cyan/10 text-cyan">
+                            <Ship className="w-4 h-4" />
+                          </div>
                         <span className="text-sm text-foreground">
                           {booking.vessel}
                         </span>

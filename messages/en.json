@@ -21,11 +21,11 @@
   "HowItWorks": {
     "title": "How It Works",
     "subtitle": "We ripped out the traditional booking calendars. SadamaAgent is a fully autonomous AI system wired directly into the national marina database.",
-    "step1": "1. Skip the Forms",
+    "step1": "Skip the Forms",
     "step1Desc": "Don't bother clicking through endless calendars or filling out forms. Your time is valuable.",
-    "step2": "2. Tell the Agent",
+    "step2": "Tell the Agent",
     "step2Desc": "Just open the Marina Assistant chat. Tell it your vessel length, draft, and when you want to arrive.",
-    "step3": "3. Direct Booking",
+    "step3": "Direct Booking",
     "step3Desc": "Provide your name and contact. The agent will lock in the reservation directly and send email confirmation."
   },
   "Berths": {

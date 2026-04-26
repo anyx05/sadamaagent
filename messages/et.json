@@ -21,11 +21,11 @@
   "HowItWorks": {
     "title": "Kuidas See Töötab",
     "subtitle": "Oleme eemaldanud traditsioonilised broneerimiskalendrid. SadamaAgent on autonoomne AI süsteem, mis on ühendatud otse andmebaasiga.",
-    "step1": "1. Jäta Vormid Vahele",
+    "step1": "Jäta Vormid Vahele",
     "step1Desc": "Ära raiska aega lõputute kalendrite ja vormide peale. Sinu aeg on väärtuslik.",
-    "step2": "2. Räägi Agendiga",
+    "step2": "Räägi Agendiga",
     "step2Desc": "Ava sadamaassistendi vestlus. Ütle oma laeva pikkus, süvis ja soovitav saabumisaeg.",
-    "step3": "3. Otsene Broneerimine",
+    "step3": "Otsene Broneerimine",
     "step3Desc": "Anna oma kontaktid. Agent lukustab broneeringu ning saadab emalili kinnituse."
   },
   "Berths": {

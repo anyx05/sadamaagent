@@ -14,7 +14,7 @@ export function FeaturedPorts() {
   const ports = data?.ports ?? []
 
   return (
-    <section id="services" className="py-16 sm:py-20 lg:py-24 bg-background">
+    <section id="services" className="pt-12 pb-24 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-12 sm:mb-16">
@@ -30,7 +30,7 @@ export function FeaturedPorts() {
         </div>
 
         {/* Interactive Map */}
-        <div className="relative w-full h-[600px] rounded-2xl overflow-hidden border border-white/10 shadow-2xl shadow-navy/20">
+        <div className="relative w-full h-[580px] rounded-2xl overflow-hidden border border-white/10 shadow-[0_0_60px_-15px_rgba(6,182,212,0.18)]">
           {/* Subtle gradient overlay to blend edges */}
           <div className="absolute inset-0 pointer-events-none rounded-2xl shadow-[inset_0_0_50px_rgba(10,22,40,0.5)] z-20" />
           
@@ -47,7 +47,9 @@ export function FeaturedPorts() {
               </p>
             </div>
           ) : (
-            <MapWrapper ports={ports} />
+            <div className="w-full h-full">
+              <MapWrapper ports={ports} />
+            </div>
           )}
         </div>
       </div>

@@ -1,47 +1,63 @@
 # SadamaAgent Test Suite
 
-This directory contains the automated test suite for the SadamaAgent Platform. It is divided into Unit, Component, Integration, and E2E tests to ensure maximum coverage and reliability.
+This directory contains the automated test suite. Tests are split into fast unit tests (Vitest) and full browser E2E tests (Playwright).
+
+For the full testing strategy, coverage targets, and contribution guidelines, see **`specs/TEST_STRATEGY.md`**.
+
+---
 
 ## Directory Structure
 
-- `e2e/`: Playwright E2E specs
-- `integration/`: API and DB integration tests (Vitest)
-- `unit/`: Utility and validation tests (Vitest)
-- `components/`: UI component tests (Vitest + React Testing Library)
-- `fixtures/`: Test data, factories, mocked responses
-- `helpers/`: Playwright Page Object Models (POMs), auth helpers, reusable test logic
-- `logs/`: Custom JSON run logs and generated reports
+```
+tests/
+├── e2e/           # Playwright E2E specs (real browser, real DB)
+├── unit/          # Vitest unit tests (pure functions, no browser)
+├── helpers/       # Playwright Page Object Models (POMs) & shared helpers
+├── logs/          # JSON run logs — gitignored
+└── setup.ts       # Vitest global setup
+```
 
-## How to Run Tests
+---
 
-### Unit, Component & Integration (Vitest)
-Run all tests:
+## Test Credentials
+
+| Account | Email | Password |
+|---|---|---|
+| Test Port Manager | `test@sadama.com` | `testing` |
+
+Ensure the test port and berths exist by running `supabase/seed_test_data.sql` in your Supabase SQL Editor before running E2E tests.
+
+---
+
+## Running Tests
+
+### Unit Tests (Vitest)
 ```bash
 npm run test:unit
 ```
-Run with UI:
+Interactive UI:
 ```bash
 npx vitest --ui
 ```
 
-### End-to-End (Playwright)
-Ensure your local dev server is running before executing E2E tests:
+### E2E Tests (Playwright)
 ```bash
+# Start the dev server first
 npm run dev
-```
-Then run the tests:
-```bash
+
+# Run E2E tests
 npm run test:e2e
-```
-View the report:
-```bash
+
+# View HTML report
 npm run test:report
 ```
 
+---
+
 ## Adding New Tests
 
-- **E2E**: Add a new `.spec.ts` file in `tests/e2e/`. Use the Page Object Model pattern by creating or extending classes in `tests/helpers/`.
-- **Component**: Add a `.test.tsx` file in `tests/components/` next to your component tests. Use React Testing Library methods like `screen.getByRole()`.
-- **Unit/Integration**: Add a `.test.ts` file in `tests/unit/` or `tests/integration/`.
+- **E2E:** Add `.spec.ts` to `tests/e2e/`. Use POMs from `tests/helpers/`.
+- **Unit:** Add `.test.ts` to `tests/unit/`. Test pure functions directly, no mocks needed.
+- **Component:** Add `.test.tsx` to a future `tests/components/` directory. Mock TanStack Query hooks with `vi.mock()`.
 
-Make sure to tag Playwright tests (e.g., `@smoke`, `@dashboard`) inside the `test.describe()` block.
+Tag Playwright tests with `@smoke` or `@regression` inside `test.describe()` blocks.

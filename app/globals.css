@@ -141,9 +141,9 @@
   }
 }
 
-/* Leaflet Customizations for Dark/Glassmorphism theme */
+/* ─── Leaflet — Dark Maritime Theme ──────────────────────────── */
 .leaflet-container {
-  background: var(--navy) !important;
+  background: #020817 !important; /* Matches main app background */
   font-family: var(--font-sans) !important;
 }
 
@@ -163,9 +163,9 @@
 
 /* Zoom controls */
 .leaflet-control-zoom a {
-  background-color: rgba(17, 29, 46, 0.85) !important;
+  background-color: rgba(17, 29, 46, 0.9) !important;
   color: #e2e8f0 !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
   backdrop-filter: blur(8px);
 }
 .leaflet-control-zoom a:hover {
@@ -218,4 +218,10 @@
 }
 .port-tooltip::before {
   border-top-color: rgba(17, 29, 46, 0.9) !important;
+}
+
+/* Scroll-hint fade animation */
+@keyframes fade-out-hint {
+  from { opacity: 1; transform: translate(-50%, 0); }
+  to   { opacity: 0; transform: translate(-50%, 4px); pointer-events: none; }
 }
