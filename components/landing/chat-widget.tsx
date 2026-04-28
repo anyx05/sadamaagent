@@ -21,10 +21,10 @@ export function ChatWidget({ isOpen, onToggle }: ChatWidgetProps) {
   const sessionId = useMemo(() => `guest-${crypto.randomUUID()}`, [])
   
   const [message, setMessage] = useState("")
-  const [messages, setMessages] = useState<{ id: number; role: 'user' | 'assistant'; content: string }[]>([
+  const [messages, setMessages] = useState<{ id: number; role: 'user' | 'assistant'; content: string; components?: any[] }[]>([
     {
       id: 1,
-      role: "assistant",
+      role: "assistant" as const,
       content: t("welcome"),
     }
   ])
@@ -50,11 +50,11 @@ export function ChatWidget({ isOpen, onToggle }: ChatWidgetProps) {
     return () => window.removeEventListener("open-chat", handleOpenChat)
   }, [])
 
-  const handleSend = async () => {
-    if (!message.trim()) return
+  const submitMessage = async (textToSubmit: string) => {
+    if (!textToSubmit.trim()) return
     
     // Add User Message Instantly
-    const userMsg = { id: Date.now(), role: "user" as const, content: message }
+    const userMsg = { id: Date.now(), role: "user" as const, content: textToSubmit }
     setMessages(prev => [...prev, userMsg])
     setMessage("")
     setIsTyping(true)
@@ -100,7 +100,8 @@ export function ChatWidget({ isOpen, onToggle }: ChatWidgetProps) {
         { 
           id: Date.now() + 1, 
           role: 'assistant' as const, 
-          content: data.text || 'I received an empty response. Please try again.' 
+          content: data.text || 'I received an empty response. Please try again.',
+          components: data.components
         }
       ])
     } catch (e) {
@@ -114,6 +115,14 @@ export function ChatWidget({ isOpen, onToggle }: ChatWidgetProps) {
       ])
     } finally {
       setIsTyping(false)
+    }
+  }
+
+  const handleSend = () => submitMessage(message)
+
+  const handleComponentAction = (comp: any) => {
+    if (comp.action === 'prompt_user' && comp.payload?.prompt) {
+      submitMessage(comp.payload.prompt)
     }
   }
 
@@ -239,6 +248,26 @@ export function ChatWidget({ isOpen, onToggle }: ChatWidgetProps) {
                       )}
                     >
                       {msg.content}
+                      {msg.components && msg.components.length > 0 && (
+                        <div className="mt-3 flex flex-col gap-2">
+                          {msg.components.map((comp: any, i: number) => {
+                            if (comp.type === 'button') {
+                              return (
+                                <Button
+                                  key={i}
+                                  variant="secondary"
+                                  size="sm"
+                                  className="w-full justify-start text-left h-auto py-2 px-3 bg-white/10 hover:bg-white/20 text-white border border-white/20 whitespace-normal"
+                                  onClick={() => handleComponentAction(comp)}
+                                >
+                                  {comp.label}
+                                </Button>
+                              )
+                            }
+                            return null
+                          })}
+                        </div>
+                      )}
                     </div>
                   </motion.div>
                 ))}
