@@ -54,6 +54,22 @@ export default function LoginPage() {
       toast.error(error.message)
       setIsLoading(false)
     } else {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        const { data: profile } = await supabase
+          .from('users')
+          .select('role')
+          .eq('id', user.id)
+          .single()
+        
+        if (profile?.role !== 'port_operator') {
+          await supabase.auth.signOut()
+          toast.error(t("wrongAccount"))
+          setIsLoading(false)
+          return
+        }
+      }
+
       toast.success(t("success"))
       window.location.href = `/${locale}/dashboard`
     }

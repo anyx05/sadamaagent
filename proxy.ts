@@ -46,6 +46,18 @@ export default async function proxy(request: NextRequest) {
       url.pathname = "/login";
       return NextResponse.redirect(url);
     }
+
+    const { data: profile } = await supabase
+      .from('users')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+    
+    if (profile?.role !== 'port_operator') {
+      const url = request.nextUrl.clone();
+      url.pathname = "/auth/wrong-account";
+      return NextResponse.redirect(url);
+    }
   }
 
   return response;

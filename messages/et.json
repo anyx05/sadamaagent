@@ -83,7 +83,8 @@
     "noAccount": "Pole veel kontot?",
     "createAccount": "Loo see",
     "securityNotice": "Ettevõtte tasemel turvalisus. Otsast-lõpuni krüpteeritud.",
-    "success": "Edukalt sisse logitud."
+    "success": "Edukalt sisse logitud.",
+    "wrongAccount": "See konto on mõeldud laevaoperaatoritele. Palun kasuta mobiilirakendust."
   },
   "SignUp": {
     "back": "Tagasi Avalehele",
@@ -311,5 +312,23 @@
     "description": "Ilmnes ootamatu viga. Meie meeskonda on teavitatud. Palun proovi lehte uuesti laadida.",
     "reload": "Laadi Leht Uuesti",
     "home": "Mine Avalehele"
+  },
+  "CheckEmail": {
+    "title": "Kontrolli oma e-posti",
+    "description": "Saatsime sinu e-postile kinnituslingi. Vajuta sellele, et aktiveerida oma konto ja avada töölaud.",
+    "backToSignIn": "Tagasi sisselogimisse",
+    "didntReceive": "Ei saanud e-kirja?",
+    "resendNow": "Saada uuesti",
+    "resendIn": "Saada uuesti {seconds}s pärast",
+    "noEmail": "E-posti ei leitud. Palun registreeru uuesti.",
+    "resendSuccess": "Uus kinnituskiri on saadetud."
+  },
+  "WrongAccount": {
+    "title": "Laevaoperaatori Konto",
+    "description": "Veebitöölaud on mõeldud eksklusiivselt sadamahalduritele. Laevaoperaatorid saavad sirvida ja broneerida sadamaid Habora mobiilirakenduse kaudu.",
+    "mobileApp": "Hangi Mobiilirakendus",
+    "mobileAppDesc": "Laadi alla Habora oma laeva ja broneeringute haldamiseks.",
+    "signInDifferent": "Logi sisse teise kontoga",
+    "backToSignIn": "Tagasi sisselogimisse"
   }
 }

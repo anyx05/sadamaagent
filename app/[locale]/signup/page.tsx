@@ -10,7 +10,7 @@ import { FormError } from "@/components/ui/form-error"
 import { createClient } from "@/lib/supabase/client"
 import { toast } from "sonner"
 import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher"
-import { useTranslations } from "next-intl"
+import { useTranslations, useLocale } from "next-intl"
 import { validateSignupForm } from "@/lib/validations"
 
 export default function SignUpPage() {
@@ -22,6 +22,7 @@ export default function SignUpPage() {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const router = useRouter()
+  const locale = useLocale()
   const t = useTranslations("SignUp")
 
   const clearError = (field: string) => {
@@ -50,8 +51,10 @@ export default function SignUpPage() {
       email: email.trim(),
       password,
       options: {
+        emailRedirectTo: `${window.location.origin}/api/auth/callback`,
         data: {
           full_name: name.trim(),
+          role: 'port_operator',
         },
       },
     })
@@ -60,8 +63,7 @@ export default function SignUpPage() {
       toast.error(error.message)
       setIsLoading(false)
     } else {
-      toast.success(t("success"))
-      router.push("/login")
+      router.push(`/${locale}/auth/check-email?email=${encodeURIComponent(email.trim())}`)
     }
   }
 

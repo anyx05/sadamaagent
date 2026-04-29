@@ -83,7 +83,8 @@
     "noAccount": "Don't have an account?",
     "createAccount": "Create one",
     "securityNotice": "Enterprise-grade security. End-to-end encryption.",
-    "success": "Successfully logged in."
+    "success": "Successfully logged in.",
+    "wrongAccount": "This account is for vessel operators. Please use the mobile app."
   },
   "SignUp": {
     "back": "Back to Home",
@@ -311,5 +312,23 @@
     "description": "An unexpected error occurred. Our team has been notified. Please try reloading the page.",
     "reload": "Reload Page",
     "home": "Go Home"
+  },
+  "CheckEmail": {
+    "title": "Check your email",
+    "description": "We sent a confirmation link to your email. Click it to activate your account and access the dashboard.",
+    "backToSignIn": "Back to sign in",
+    "didntReceive": "Didn't receive the email?",
+    "resendNow": "Resend confirmation",
+    "resendIn": "Resend in {seconds}s",
+    "noEmail": "Email not found. Please sign up again.",
+    "resendSuccess": "A new confirmation email has been sent."
+  },
+  "WrongAccount": {
+    "title": "Vessel Operator Account",
+    "description": "The web dashboard is exclusively for port managers. Vessel operators can browse and book ports using the Habora mobile app.",
+    "mobileApp": "Get the Mobile App",
+    "mobileAppDesc": "Download Habora to manage your vessel and bookings.",
+    "signInDifferent": "Sign in with a different account",
+    "backToSignIn": "Back to sign in"
   }
 }
